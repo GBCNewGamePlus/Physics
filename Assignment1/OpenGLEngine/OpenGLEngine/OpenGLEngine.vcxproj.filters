@@ -126,6 +126,9 @@
     <ClCompile Include="BungeeSpawnSystem.cpp">
       <Filter>Physics\Bungee</Filter>
     </ClCompile>
+    <ClCompile Include="BungeeCordForceGeneratorSystem.cpp">
+      <Filter>Physics\Bungee</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stb_image.h">
@@ -264,6 +267,12 @@
       <Filter>Physics\Bungee</Filter>
     </ClInclude>
     <ClInclude Include="BungeeSpawnComponent.h">
+      <Filter>Physics\Bungee</Filter>
+    </ClInclude>
+    <ClInclude Include="BungeeCordComponent.h">
+      <Filter>Physics\Bungee</Filter>
+    </ClInclude>
+    <ClInclude Include="BungeeCordForceGeneratorSystem.h">
       <Filter>Physics\Bungee</Filter>
     </ClInclude>
   </ItemGroup>

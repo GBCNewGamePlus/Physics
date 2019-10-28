@@ -12,6 +12,8 @@
 #include "SphereComponent.h"
 #include "BungeeSpawnComponent.h"
 #include "BungeeSpawnSystem.h"
+#include "BungeeCordForceGeneratorSystem.h"
+#include "BungeeCordComponent.h"
 #include <string>
 #include <thread>
 #include <mutex>
@@ -65,6 +67,7 @@ int main()
 	world.getSystemManager().addSystem<ForceAccumulatorSystem>();
 	world.getSystemManager().addSystem<FPSControlSystem>();
 	world.getSystemManager().addSystem<BungeeSpawnSystem>();
+	world.getSystemManager().addSystem<BungeeCordForceGeneratorSystem>();
 
 	float time = glfwGetTime();
 	float stepTime = glfwGetTime();
@@ -100,6 +103,7 @@ int main()
 		// Physics
 		// Force Generators
 		world.getSystemManager().getSystem<GravityForceGeneratorSystem>().Update(deltaTime);
+		world.getSystemManager().getSystem<BungeeCordForceGeneratorSystem>().Update(deltaTime);
 		world.getSystemManager().getSystem<FixedSpringForceGeneratorSystem>().Update(deltaTime);
 		world.getSystemManager().getSystem<PairedSpringForceGeneratorSystem>().Update(deltaTime);
 

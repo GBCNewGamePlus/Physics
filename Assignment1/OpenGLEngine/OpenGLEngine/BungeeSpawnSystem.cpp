@@ -21,13 +21,14 @@ namespace Reality
 				if (bungeeSpawnComponent.free) {
 					bungeeSpawnComponent.free = false;
 					// Spawns another Bungee from here
-					auto e = getWorld().createEntity();
+					auto subE = getWorld().createEntity();
 					float rx = static_cast <float> (rand()) / static_cast <float> (RAND_MAX) * 4 - 2;
 					float ry = static_cast <float> (rand()) / static_cast <float> (RAND_MAX) * 4 - 2;
 					float rz = static_cast <float> (rand()) / static_cast <float> (RAND_MAX) * 4 - 2;
-					e.addComponent<TransformComponent>(transformComponent.position + Vector3(rx, ry, rz));
-					e.addComponent<ParticleComponent>();
-					e.addComponent<BungeeSpawnComponent>();
+					subE.addComponent<TransformComponent>(transformComponent.position + Vector3(rx, ry, rz));
+					subE.addComponent<ParticleComponent>();
+					subE.addComponent<BungeeSpawnComponent>();
+					subE.addComponent<BungeeCordComponent>(10, 2.5f, e, subE);
 					// without a mesh, this will drawn out as another sphere
 				}
 			}

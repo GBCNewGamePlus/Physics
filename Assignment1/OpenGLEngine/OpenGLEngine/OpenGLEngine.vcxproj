@@ -121,6 +121,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BungeeCordForceGeneratorSystem.cpp" />
     <ClCompile Include="BungeeSpawnSystem.cpp" />
     <ClCompile Include="FixedSpringForceGeneratorSystem.cpp" />
     <ClCompile Include="ForceAccumulatorSystem.cpp" />
@@ -145,6 +146,8 @@
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BungeeCordComponent.h" />
+    <ClInclude Include="BungeeCordForceGeneratorSystem.h" />
     <ClInclude Include="BungeeSpawnComponent.h" />
     <ClInclude Include="BungeeSpawnSystem.h" />
     <ClInclude Include="Camera.h" />
