@@ -121,6 +121,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BungeeSpawnSystem.cpp" />
     <ClCompile Include="FixedSpringForceGeneratorSystem.cpp" />
     <ClCompile Include="ForceAccumulatorSystem.cpp" />
     <ClCompile Include="FPSControlSystem.cpp" />
@@ -144,6 +145,8 @@
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BungeeSpawnComponent.h" />
+    <ClInclude Include="BungeeSpawnSystem.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Color.h" />
     <ClInclude Include="ECSConfig.h" />

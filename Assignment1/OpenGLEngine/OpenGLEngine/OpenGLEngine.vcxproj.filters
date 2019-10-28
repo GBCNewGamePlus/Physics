@@ -43,6 +43,21 @@
     <Filter Include="Input">
       <UniqueIdentifier>{09a9940b-c17f-43c0-becf-d8da8efa3d30}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Physics\Springs">
+      <UniqueIdentifier>{11cdde08-0b75-4de2-957b-05836f1313c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Physics\Collision">
+      <UniqueIdentifier>{61109ae4-9506-4518-b90a-3d615438b18b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Physics\Bungee">
+      <UniqueIdentifier>{568ea84b-b258-4e40-b8b7-f2b65142cd4b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Physics\Buoyancy">
+      <UniqueIdentifier>{c2c6406f-2956-4d32-b3ae-8b5e51568260}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Physics\NBody">
+      <UniqueIdentifier>{aff3845a-77ec-40d6-afa6-b78d038bdee7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="glad.c">
@@ -90,23 +105,26 @@
     <ClCompile Include="ForceAccumulatorSystem.cpp">
       <Filter>Physics\Particles</Filter>
     </ClCompile>
-    <ClCompile Include="FixedSpringForceGeneratorSystem.cpp">
-      <Filter>Physics</Filter>
-    </ClCompile>
-    <ClCompile Include="PairedSpringForceGeneratorSystem.cpp">
-      <Filter>Physics</Filter>
-    </ClCompile>
-    <ClCompile Include="ParticleContactResolutionSystem.cpp">
-      <Filter>Physics</Filter>
-    </ClCompile>
     <ClCompile Include="InputEventSystem.cpp">
       <Filter>Input</Filter>
     </ClCompile>
     <ClCompile Include="FPSControlSystem.cpp">
       <Filter>TestCS</Filter>
     </ClCompile>
+    <ClCompile Include="FixedSpringForceGeneratorSystem.cpp">
+      <Filter>Physics\Springs</Filter>
+    </ClCompile>
+    <ClCompile Include="PairedSpringForceGeneratorSystem.cpp">
+      <Filter>Physics\Springs</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticleContactResolutionSystem.cpp">
+      <Filter>Physics\Collision</Filter>
+    </ClCompile>
     <ClCompile Include="SphereContactSystem.cpp">
-      <Filter>Physics</Filter>
+      <Filter>Physics\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="BungeeSpawnSystem.cpp">
+      <Filter>Physics\Bungee</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -203,24 +221,6 @@
     <ClInclude Include="ForceAccumulatorSystem.h">
       <Filter>Physics\Particles</Filter>
     </ClInclude>
-    <ClInclude Include="FixedSpringComponent.h">
-      <Filter>Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="FixedSpringForceGeneratorSystem.h">
-      <Filter>Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="PairedSpringComponent.h">
-      <Filter>Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="PairedSpringForceGeneratorSystem.h">
-      <Filter>Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="ParticleContactComponent.h">
-      <Filter>Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="ParticleContactResolutionSystem.h">
-      <Filter>Physics</Filter>
-    </ClInclude>
     <ClInclude Include="InputEventSystem.h">
       <Filter>Input</Filter>
     </ClInclude>
@@ -236,11 +236,35 @@
     <ClInclude Include="SphereComponent.h">
       <Filter>TestCS</Filter>
     </ClInclude>
+    <ClInclude Include="FixedSpringComponent.h">
+      <Filter>Physics\Springs</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedSpringForceGeneratorSystem.h">
+      <Filter>Physics\Springs</Filter>
+    </ClInclude>
+    <ClInclude Include="PairedSpringComponent.h">
+      <Filter>Physics\Springs</Filter>
+    </ClInclude>
+    <ClInclude Include="PairedSpringForceGeneratorSystem.h">
+      <Filter>Physics\Springs</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleContactComponent.h">
+      <Filter>Physics\Collision</Filter>
+    </ClInclude>
     <ClInclude Include="ParticleContactEvent.h">
-      <Filter>Physics</Filter>
+      <Filter>Physics\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleContactResolutionSystem.h">
+      <Filter>Physics\Collision</Filter>
     </ClInclude>
     <ClInclude Include="SphereContactSystem.h">
-      <Filter>Physics</Filter>
+      <Filter>Physics\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="BungeeSpawnSystem.h">
+      <Filter>Physics\Bungee</Filter>
+    </ClInclude>
+    <ClInclude Include="BungeeSpawnComponent.h">
+      <Filter>Physics\Bungee</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

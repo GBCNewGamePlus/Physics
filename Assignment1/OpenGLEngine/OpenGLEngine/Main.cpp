@@ -9,8 +9,9 @@
 #include "ForceAccumulatorSystem.h"
 #include "PairedSpringForceGeneratorSystem.h"
 #include "FPSControlSystem.h"
-#include "SphereContactSystem.h"
-#include "ParticleContactResolutionSystem.h"
+#include "SphereComponent.h"
+#include "BungeeSpawnComponent.h"
+#include "BungeeSpawnSystem.h"
 #include <string>
 #include <thread>
 #include <mutex>
@@ -22,6 +23,7 @@ using namespace Reality;
 void LoadAssets(ECSWorld& world);
 void MakeABunchaSprings(ECSWorld& world);
 void MakeABunchaSpheres(ECSWorld& world);
+void MakeBungeeChordSeed(ECSWorld& world);
 
 int main()
 {
@@ -48,7 +50,8 @@ int main()
 		"Shaders/fragmentDefault.fs");
 
 	//MakeABunchaSprings(world);
-	MakeABunchaSpheres(world);
+	//MakeABunchaSpheres(world);
+	MakeBungeeChordSeed(world);
 
 	// Create Systems
 	world.getSystemManager().addSystem<RenderingSystem>();
@@ -61,6 +64,7 @@ int main()
 	world.getSystemManager().addSystem<PairedSpringForceGeneratorSystem>();
 	world.getSystemManager().addSystem<ForceAccumulatorSystem>();
 	world.getSystemManager().addSystem<FPSControlSystem>();
+	world.getSystemManager().addSystem<BungeeSpawnSystem>();
 
 	float time = glfwGetTime();
 	float stepTime = glfwGetTime();
@@ -91,6 +95,7 @@ int main()
 		world.getSystemManager().getSystem<FPSControlSystem>().Update(deltaTime);
 		world.getSystemManager().getSystem<RotateSystem>().Update(deltaTime);
 		world.getSystemManager().getSystem<ParticleSpawnerSystem>().Update(deltaTime);
+		world.getSystemManager().getSystem<BungeeSpawnSystem>().Update(deltaTime);
 
 		// Physics
 		// Force Generators
@@ -240,38 +245,26 @@ void MakeABunchaSpheres(ECSWorld& world)
 {
 	auto e = world.createEntity();
 	e.addComponent<TransformComponent>(Vector3(-2.5f, -3, -3));
-	//e.addComponent<ParticleComponent>(1, Vector3(-2.5f, -3, -3));
-	//e.addComponent<MeshComponent>(
-	//	"Resources/Models/ribbon-ball/model.obj",
-	//	"Shaders/vertexDefault.vs",
-	//	"Shaders/fragmentDefault.fs");
 	e.addComponent<SphereComponent>(1);
 
 	auto e1 = world.createEntity();
 	e1.addComponent<TransformComponent>(Vector3(-2.5f, -5, -3));
-	//e1.addComponent<ParticleComponent>(1, Vector3(-2.5f, -3, -3));
-	//e1.addComponent<MeshComponent>(
-	//	"Resources/Models/ribbon-ball/model.obj",
-	//	"Shaders/vertexDefault.vs",
-	//	"Shaders/fragmentDefault.fs");
 	e1.addComponent<SphereComponent>(1);
 
 	auto e2 = world.createEntity();
 	e2.addComponent<TransformComponent>(Vector3(-2.5f, -4, -1));
-	//e2.addComponent<ParticleComponent>(1, Vector3(-2.5f, -3, -3));
-	//e2.addComponent<MeshComponent>(
-	//	"Resources/Models/ribbon-ball/model.obj",
-	//	"Shaders/vertexDefault.vs",
-	//	"Shaders/fragmentDefault.fs");
 	e2.addComponent<SphereComponent>(1);
 
 	auto e3 = world.createEntity();
 	e3.addComponent<TransformComponent>(Vector3(-2.5f, -3, -3));
-	//e3.addComponent<ParticleComponent>(1, Vector3(-2.5f, -3, -3));
-	//e3.addComponent<MeshComponent>(
-	//	"Resources/Models/ribbon-ball/model.obj",
-	//	"Shaders/vertexDefault.vs",
-	//	"Shaders/fragmentDefault.fs");
 	e3.addComponent<SphereComponent>(1);
 
+}
+
+void MakeBungeeChordSeed(ECSWorld& world)
+{
+	auto e = world.createEntity();
+	e.addComponent<TransformComponent>(Vector3(-2.5f, -3, -3));
+	e.addComponent<BungeeSpawnComponent>();
+	auto &seedSpawnComponent = e.getComponent<BungeeSpawnComponent>();
 }
