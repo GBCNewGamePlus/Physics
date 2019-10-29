@@ -1,20 +1,16 @@
 #pragma once
 #include "ECSConfig.h"
+#include "ParticleComponent.h"
 #include "TransformComponent.h"
-#include "MeshComponent.h"
+#include "BuoyancyComponent.h"
 #include "SphereComponent.h"
-#include "BoxComponent.h"
-
-class Shader;
-class Camera;
 
 namespace Reality
 {
-	class RenderingSystem : public ECSSystem
+	class BuoyancyForceGeneratorSystem : public ECSSystem
 	{
 	public:
-		RenderingSystem();
+		BuoyancyForceGeneratorSystem();
 		void Update(float deltaTime);
 	};
 }
-

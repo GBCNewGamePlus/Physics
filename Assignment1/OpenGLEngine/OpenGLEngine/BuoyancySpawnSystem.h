@@ -1,20 +1,19 @@
 #pragma once
 #include "ECSConfig.h"
-#include "BungeeSpawnComponent.h"
-#include "BungeeCordComponent.h"
+#include "BuoyancySpawnComponent.h"
+#include "BuoyancyComponent.h"
 #include "TransformComponent.h"
 #include "ParticleComponent.h"
 #include "SphereComponent.h"
 
 namespace Reality
 {
-
-	class BungeeSpawnSystem : public ECSSystem
+	class BuoyancySpawnSystem : public ECSSystem
 	{
 	private:
 		bool keyReleased = true;
 	public:
-		BungeeSpawnSystem();
+		BuoyancySpawnSystem();
 		void Update(float deltaTime);
 	};
 }

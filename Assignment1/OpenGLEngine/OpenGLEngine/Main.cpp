@@ -26,6 +26,7 @@ void LoadAssets(ECSWorld& world);
 void MakeABunchaSprings(ECSWorld& world);
 void MakeABunchaSpheres(ECSWorld& world);
 void MakeBungeeChordSeed(ECSWorld& world);
+void MakeBucket(ECSWorld& world);
 
 int main()
 {
@@ -51,9 +52,11 @@ int main()
 		"Shaders/vertexDefault.vs",
 		"Shaders/fragmentDefault.fs");
 
-	//MakeABunchaSprings(world);
-	//MakeABunchaSpheres(world);
+	// Uncomment for part 1 
 	MakeBungeeChordSeed(world);
+
+	// Uncomment for part 2
+	//MakeBucket(world);
 
 	// Create Systems
 	world.getSystemManager().addSystem<RenderingSystem>();
@@ -270,5 +273,12 @@ void MakeBungeeChordSeed(ECSWorld& world)
 	auto e = world.createEntity();
 	e.addComponent<TransformComponent>(Vector3(-2.5f, -3, -3));
 	e.addComponent<BungeeSpawnComponent>();
-	auto &seedSpawnComponent = e.getComponent<BungeeSpawnComponent>();
+	e.addComponent<SphereComponent>(0.5f);
+}
+
+void MakeBucket(ECSWorld& world) {
+	auto e = world.createEntity();
+	e.addComponent<TransformComponent>(Vector3(-2.5f, -10, -7));
+	e.addComponent<BoxComponent>(10.0f,5.0f,10.0f);
+
 }

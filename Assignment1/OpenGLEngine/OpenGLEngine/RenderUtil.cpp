@@ -317,6 +317,35 @@ namespace Reality
 
 	}
 
+	void RenderUtil::DrawBuoyancySphere(const glm::vec3& position, const float& radius, const float& liquidHeight, 
+		const Color& colorAbove, const Color& colorBelow)
+	{
+		glBindVertexArray(sphereVAO);
+		buoyancyShader.use();
+		// view/projection transformations
+		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)window->width / (float)window->height, 0.1f, 100.0f);
+		glm::mat4 view = camera.GetViewMatrix();
+		buoyancyShader.setMat4("projection", projection);
+		buoyancyShader.setMat4("view", view);
+
+		// world transformation
+		glm::mat4 model = glm::mat4(1.0f);
+		model = glm::translate(model, position);
+		model = glm::scale(model, glm::vec3(radius, radius, radius));
+		buoyancyShader.setMat4("model", model);
+
+		buoyancyShader.setFloat("liquidHeight", liquidHeight);
+		buoyancyShader.setVec4("colAbove", glm::vec4(colorAbove.r, colorAbove.g, colorAbove.b, colorAbove.a));
+		buoyancyShader.setVec4("colBelow", glm::vec4(colorBelow.r, colorBelow.g, colorBelow.b, colorBelow.a));
+
+		// bind VBOs
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, (void*)0);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+	}
+
+
 	void RenderUtil::SetUpLinePrimitive()
 	{
 		// set up vertex data (and buffer(s)) and configure vertex attributes
@@ -341,8 +370,10 @@ namespace Reality
 	void RenderUtil::SetupPrimitiveShader()
 	{
 		primitiveShader = Shader("Shaders/vertexDefault.vs", "Shaders/FragmentConstant.fs");
+		primitiveTransparentShader = Shader("Shaders/vertexDefault.vs", "Shaders/FragmentTransparent.fs");
 		primitiveShaderBasic = Shader("Shaders/SimpleVertex.vs", "Shaders/FragmentConstant.fs");
 		textShader = Shader("Shaders/text.vs", "Shaders/text.fs");
+		buoyancyShader = Shader("Shaders/VertexBouyancy.vs", "Shaders/FragmentBuoyancy.fs");
 	}
 
 	void RenderUtil::SetupTextRender()
@@ -486,12 +517,12 @@ namespace Reality
 	{
 		float time = glfwGetTime();
 		glBindVertexArray(cubeVAO);
-		primitiveShader.use();
+		primitiveTransparentShader.use();
 		// view/projection transformations
 		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)window->width / (float)window->height, 0.1f, 100.0f);
 		glm::mat4 view = camera.GetViewMatrix();
-		primitiveShader.setMat4("projection", projection);
-		primitiveShader.setMat4("view", view);
+		primitiveTransparentShader.setMat4("projection", projection);
+		primitiveTransparentShader.setMat4("view", view);
 
 		// world transformation
 		glm::mat4 model = glm::mat4(1.0f);
@@ -500,15 +531,18 @@ namespace Reality
 		model = glm::rotate(model, glm::radians(rotation.z), glm::vec3(0, 0, 1));
 		model = glm::rotate(model, glm::radians(rotation.y), glm::vec3(0, 1, 0));
 		model = glm::rotate(model, glm::radians(rotation.x), glm::vec3(1, 0, 0));
-		primitiveShader.setMat4("model", model);
+		primitiveTransparentShader.setMat4("model", model);
 
-		primitiveShader.setVec3("col", glm::vec3(color.r, color.g, color.b));
+		primitiveTransparentShader.setVec4("col", glm::vec4(color.r, color.g, color.b, color.a));
 
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		verts += 36;
 		triangles += 12;
 		drawCalls++;
+		glDisable(GL_BLEND);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		renderDeltaTime += glfwGetTime() - time;
 	}

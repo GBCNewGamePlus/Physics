@@ -45,6 +45,7 @@ namespace Reality
 
 		/*Draw Primitives*/
 		void DrawSphere(const glm::vec3& position = glm::vec3(0, 0, 0), const float& radius = 1, const Color& color = Color(0, 1, 0, 1));
+		void DrawBuoyancySphere(const glm::vec3& position = glm::vec3(0, 0, 0), const float& radius = 1, const float& liquidHeight=0, const Color& colorAbove = Color(0, 1, 0, 1), const Color& colorBelow = Color(0, 1, 0, 1));
 		void DrawCube(const glm::vec3& position = glm::vec3(0,0,0), const glm::vec3& scale = glm::vec3(1, 1, 1), const glm::vec3& rotation = glm::vec3(0, 0, 0), const Color& color = Color(0,1,0,1));
 		void DrawLine(const glm::vec3& start, const glm::vec3& end, const Color& color = Color(0, 1, 0, 1));
 
@@ -79,6 +80,8 @@ namespace Reality
 		GLuint textVAO, textVBO;
 		Shader primitiveShader;
 		Shader primitiveShaderBasic;
+		Shader primitiveTransparentShader;
+		Shader buoyancyShader;
 		Shader textShader;
 
 		/*Set Up Primitives*/

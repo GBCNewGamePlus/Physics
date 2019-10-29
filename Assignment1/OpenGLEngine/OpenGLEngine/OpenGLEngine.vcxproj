@@ -123,6 +123,8 @@
   <ItemGroup>
     <ClCompile Include="BungeeCordForceGeneratorSystem.cpp" />
     <ClCompile Include="BungeeSpawnSystem.cpp" />
+    <ClCompile Include="BuoyancyForceGeneratorSystem.cpp" />
+    <ClCompile Include="BuoyancySpawnSystem.cpp" />
     <ClCompile Include="FixedSpringForceGeneratorSystem.cpp" />
     <ClCompile Include="ForceAccumulatorSystem.cpp" />
     <ClCompile Include="FPSControlSystem.cpp" />
@@ -146,10 +148,15 @@
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BoxComponent.h" />
     <ClInclude Include="BungeeCordComponent.h" />
     <ClInclude Include="BungeeCordForceGeneratorSystem.h" />
     <ClInclude Include="BungeeSpawnComponent.h" />
     <ClInclude Include="BungeeSpawnSystem.h" />
+    <ClInclude Include="BuoyancyComponent.h" />
+    <ClInclude Include="BuoyancyForceGeneratorSystem.h" />
+    <ClInclude Include="BuoyancySpawnComponent.h" />
+    <ClInclude Include="BuoyancySpawnSystem.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Color.h" />
     <ClInclude Include="ECSConfig.h" />
@@ -196,13 +203,16 @@
     <ClInclude Include="WorldData.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Shaders\FragmentBuoyancy.fs" />
     <None Include="Shaders\FragmentConstant.fs" />
     <None Include="Shaders\fragmentDefault.fs" />
+    <None Include="Shaders\FragmentTransparent.fs" />
     <None Include="Shaders\Lamp.fs" />
     <None Include="Shaders\Lamp.vs" />
     <None Include="Shaders\Lighting_Maps.fs" />
     <None Include="Shaders\Lighting_Maps.vs" />
     <None Include="Shaders\SimpleVertex.vs" />
+    <None Include="Shaders\VertexBuoyancy.fs" />
     <None Include="Shaders\vertexDefault.vs" />
     <None Include="text.fs" />
     <None Include="text.vs" />

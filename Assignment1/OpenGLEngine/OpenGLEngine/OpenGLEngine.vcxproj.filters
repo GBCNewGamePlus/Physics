@@ -129,6 +129,12 @@
     <ClCompile Include="BungeeCordForceGeneratorSystem.cpp">
       <Filter>Physics\Bungee</Filter>
     </ClCompile>
+    <ClCompile Include="BuoyancySpawnSystem.cpp">
+      <Filter>Physics\Buoyancy</Filter>
+    </ClCompile>
+    <ClCompile Include="BuoyancyForceGeneratorSystem.cpp">
+      <Filter>Physics\Buoyancy</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stb_image.h">
@@ -275,6 +281,21 @@
     <ClInclude Include="BungeeCordForceGeneratorSystem.h">
       <Filter>Physics\Bungee</Filter>
     </ClInclude>
+    <ClInclude Include="BoxComponent.h">
+      <Filter>TestCS</Filter>
+    </ClInclude>
+    <ClInclude Include="BuoyancySpawnComponent.h">
+      <Filter>Physics\Buoyancy</Filter>
+    </ClInclude>
+    <ClInclude Include="BuoyancySpawnSystem.h">
+      <Filter>Physics\Buoyancy</Filter>
+    </ClInclude>
+    <ClInclude Include="BuoyancyComponent.h">
+      <Filter>Physics\Buoyancy</Filter>
+    </ClInclude>
+    <ClInclude Include="BuoyancyForceGeneratorSystem.h">
+      <Filter>Physics\Buoyancy</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\Lighting_Maps.vs">
@@ -305,6 +326,15 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="text.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\FragmentTransparent.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\FragmentBuoyancy.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\VertexBuoyancy.fs">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

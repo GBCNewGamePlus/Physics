@@ -39,9 +39,14 @@ namespace Reality
 				// Draw
 				getWorld().data.renderUtil->DrawModel(mesh.mesh, mesh.vertexShader, mesh.fragmentShader);
 			}
-			else
+			else if(e.hasComponent<SphereComponent>())
 			{
-				getWorld().data.renderUtil->DrawSphere(transform.position, 1, Color(0,1,0,1));
+				auto &sphere = e.getComponent<SphereComponent>();
+				getWorld().data.renderUtil->DrawSphere(transform.position, sphere.radius, Color(0,1,0,1));
+			}
+			else if (e.hasComponent<BoxComponent>()) {
+				auto &box = e.getComponent<BoxComponent>();
+				getWorld().data.renderUtil->DrawCube(transform.position, Vector3(box.xScale,box.yScale,box.zScale), Vector3(0,0,0), Color(0, 1, 0, 0.3f));
 			}
 		}
 	}
