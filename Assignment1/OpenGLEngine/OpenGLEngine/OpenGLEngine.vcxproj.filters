@@ -138,6 +138,9 @@
     <ClCompile Include="BuoyancyDensitySystem.cpp">
       <Filter>Physics\Buoyancy</Filter>
     </ClCompile>
+    <ClCompile Include="NBodyForceGeneratorSystem.cpp">
+      <Filter>Physics\NBody</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stb_image.h">
@@ -301,6 +304,12 @@
     </ClInclude>
     <ClInclude Include="BuoyancyDensitySystem.h">
       <Filter>Physics\Buoyancy</Filter>
+    </ClInclude>
+    <ClInclude Include="NBodyForceGeneratorSystem.h">
+      <Filter>Physics\NBody</Filter>
+    </ClInclude>
+    <ClInclude Include="NBodyComponent.h">
+      <Filter>Physics\NBody</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

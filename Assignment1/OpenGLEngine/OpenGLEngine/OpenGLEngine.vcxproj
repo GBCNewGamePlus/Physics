@@ -22,7 +22,7 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{BF971B9A-9ACC-4B50-8E62-4CC32E780AA5}</ProjectGuid>
     <RootNamespace>OpenGLEngine</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -138,6 +138,7 @@
     <ClCompile Include="Mix\Event.cpp" />
     <ClCompile Include="Mix\System.cpp" />
     <ClCompile Include="Mix\World.cpp" />
+    <ClCompile Include="NBodyForceGeneratorSystem.cpp" />
     <ClCompile Include="PairedSpringForceGeneratorSystem.cpp" />
     <ClCompile Include="ParticleContactResolutionSystem.cpp" />
     <ClCompile Include="ParticleSpawnerSystem.cpp" />
@@ -180,6 +181,8 @@
     <ClInclude Include="Mix\World.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="MouseMoveEvent.h" />
+    <ClInclude Include="NBodyComponent.h" />
+    <ClInclude Include="NBodyForceGeneratorSystem.h" />
     <ClInclude Include="OldMain.h" />
     <ClInclude Include="PairedSpringComponent.h" />
     <ClInclude Include="PairedSpringForceGeneratorSystem.h" />
