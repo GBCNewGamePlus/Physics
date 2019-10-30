@@ -4,10 +4,10 @@ namespace Reality
 {
 	struct BuoyancyComponent
 	{
-		BuoyancyComponent(ECSEntity _sphere = ECSEntity(), ECSEntity _vat = ECSEntity(), float _liquidHeight = 0)
-			: sphere(_sphere), vat(_vat), liquidHeight(_liquidHeight) {}
-		ECSEntity sphere;
+		BuoyancyComponent(ECSEntity _vat = ECSEntity(), float _liquidHeight = 0, float _maxY = 0)
+			: vat(_vat), liquidHeight(_liquidHeight), maxY(_maxY){}
 		ECSEntity vat;
 		float liquidHeight;
+		float maxY;
 	};
 }

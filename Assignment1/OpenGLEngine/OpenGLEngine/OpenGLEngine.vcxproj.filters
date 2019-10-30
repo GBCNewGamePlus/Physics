@@ -135,6 +135,9 @@
     <ClCompile Include="BuoyancyForceGeneratorSystem.cpp">
       <Filter>Physics\Buoyancy</Filter>
     </ClCompile>
+    <ClCompile Include="BuoyancyDensitySystem.cpp">
+      <Filter>Physics\Buoyancy</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stb_image.h">
@@ -294,6 +297,9 @@
       <Filter>Physics\Buoyancy</Filter>
     </ClInclude>
     <ClInclude Include="BuoyancyForceGeneratorSystem.h">
+      <Filter>Physics\Buoyancy</Filter>
+    </ClInclude>
+    <ClInclude Include="BuoyancyDensitySystem.h">
       <Filter>Physics\Buoyancy</Filter>
     </ClInclude>
   </ItemGroup>

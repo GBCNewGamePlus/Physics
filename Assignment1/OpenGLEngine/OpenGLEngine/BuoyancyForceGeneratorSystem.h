@@ -3,6 +3,7 @@
 #include "ParticleComponent.h"
 #include "TransformComponent.h"
 #include "BuoyancyComponent.h"
+#include "BuoyancySpawnComponent.h"
 #include "SphereComponent.h"
 
 namespace Reality

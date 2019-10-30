@@ -43,7 +43,8 @@ namespace Reality
 				const auto &buoyancy = e.getComponent<BuoyancyComponent>();
 				const auto &sphere = e.getComponent<SphereComponent>();
 				getWorld().data.renderUtil->DrawBuoyancySphere(transform.position, sphere.radius, buoyancy.liquidHeight, 
-					Color(0, 1, 0, 1),Color(1, 0, 0, 1));
+					/* Yellowish for not below water*/  /* Blueish for below water */
+					Color(1, 1, 0.88f, 0.5),            Color(0.529f, 0.808f, 0.922f, 0.5));
 			}
 			else if(e.hasComponent<SphereComponent>())
 			{
@@ -52,7 +53,7 @@ namespace Reality
 			}
 			else if (e.hasComponent<BoxComponent>()) {
 				auto &box = e.getComponent<BoxComponent>();
-				getWorld().data.renderUtil->DrawCube(transform.position, Vector3(box.xScale,box.yScale,box.zScale), Vector3(0,0,0), Color(0, 1, 0, 0.3f));
+				getWorld().data.renderUtil->DrawCube(transform.position, transform.scale, Vector3(0,0,0), Color(0, 1, 0, 0.3f));
 			}
 		}
 	}

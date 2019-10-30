@@ -20,6 +20,7 @@
 #include "BuoyancyForceGeneratorSystem.h"
 #include "BuoyancySpawnComponent.h"
 #include "BuoyancySpawnSystem.h"
+#include "BuoyancyDensitySystem.h"
 /* NBody */
 #include <string>
 #include <thread>
@@ -79,6 +80,7 @@ int main()
 	world.getSystemManager().addSystem<BungeeSpawnSystem>();
 	world.getSystemManager().addSystem<BungeeCordForceGeneratorSystem>();
 	world.getSystemManager().addSystem<BuoyancySpawnSystem>();
+	world.getSystemManager().addSystem<BuoyancyDensitySystem>();
 	world.getSystemManager().addSystem<BuoyancyForceGeneratorSystem>();
 
 	float time = glfwGetTime();
@@ -112,6 +114,7 @@ int main()
 		world.getSystemManager().getSystem<ParticleSpawnerSystem>().Update(deltaTime);
 		world.getSystemManager().getSystem<BungeeSpawnSystem>().Update(deltaTime);
 		world.getSystemManager().getSystem<BuoyancySpawnSystem>().Update(deltaTime);
+		world.getSystemManager().getSystem<BuoyancyDensitySystem>().Update(deltaTime);
 
 		// Physics
 		// Force Generators
@@ -289,7 +292,7 @@ void MakeBungeeChordSeed(ECSWorld& world)
 
 void MakeBucket(ECSWorld& world) {
 	auto e = world.createEntity();
-	e.addComponent<TransformComponent>(Vector3(-2.5f, -10, -7));
-	e.addComponent<BoxComponent>(10.0f,5.0f,10.0f);
-	e.addComponent<BuoyancySpawnComponent>();
+	e.addComponent<TransformComponent>(Vector3(-2.5f, -10, -7), Vector3(10.0f, 5.0f, 10.0f));
+	e.addComponent<BoxComponent>();
+	e.addComponent<BuoyancySpawnComponent>(20,1);
 }

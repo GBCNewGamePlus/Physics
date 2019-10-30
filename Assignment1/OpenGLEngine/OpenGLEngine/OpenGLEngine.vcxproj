@@ -123,6 +123,7 @@
   <ItemGroup>
     <ClCompile Include="BungeeCordForceGeneratorSystem.cpp" />
     <ClCompile Include="BungeeSpawnSystem.cpp" />
+    <ClCompile Include="BuoyancyDensitySystem.cpp" />
     <ClCompile Include="BuoyancyForceGeneratorSystem.cpp" />
     <ClCompile Include="BuoyancySpawnSystem.cpp" />
     <ClCompile Include="FixedSpringForceGeneratorSystem.cpp" />
@@ -154,6 +155,7 @@
     <ClInclude Include="BungeeSpawnComponent.h" />
     <ClInclude Include="BungeeSpawnSystem.h" />
     <ClInclude Include="BuoyancyComponent.h" />
+    <ClInclude Include="BuoyancyDensitySystem.h" />
     <ClInclude Include="BuoyancyForceGeneratorSystem.h" />
     <ClInclude Include="BuoyancySpawnComponent.h" />
     <ClInclude Include="BuoyancySpawnSystem.h" />

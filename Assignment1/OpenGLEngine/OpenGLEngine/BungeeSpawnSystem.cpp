@@ -22,10 +22,6 @@ namespace Reality
 					bungeeSpawnComponent.free = false;
 					// Spawns another Bungee from here
 					auto subE = getWorld().createEntity();
-					//float rx = static_cast <float> (rand()) / static_cast <float> (RAND_MAX) * 4 - 2;
-					//float ry = static_cast <float> (rand()) / static_cast <float> (RAND_MAX) * 4 - 2;
-					//float rz = static_cast <float> (rand()) / static_cast <float> (RAND_MAX) * 4 - 2;
-					//subE.addComponent<TransformComponent>(transformComponent.position + Vector3(rx, ry, rz));
 					subE.addComponent<TransformComponent>(getWorld().data.renderUtil->camera.Position);
 					subE.addComponent<ParticleComponent>();
 					subE.addComponent<BungeeSpawnComponent>();
