@@ -5,10 +5,11 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 
-out float currentHeight
+out float currentHeight;
 
 void main()
 {
     gl_Position = projection * view * model * vec4(aPos, 1.0);
-    currentHeight = (model * vec4(aPos, 1.0)).z;
+    vec4 worldPosition = model * vec4(aPos, 1.0);
+    currentHeight = worldPosition.y;
 }

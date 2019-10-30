@@ -212,7 +212,7 @@
     <None Include="Shaders\Lighting_Maps.fs" />
     <None Include="Shaders\Lighting_Maps.vs" />
     <None Include="Shaders\SimpleVertex.vs" />
-    <None Include="Shaders\VertexBuoyancy.fs" />
+    <None Include="Shaders\VertexBuoyancy.vs" />
     <None Include="Shaders\vertexDefault.vs" />
     <None Include="text.fs" />
     <None Include="text.vs" />

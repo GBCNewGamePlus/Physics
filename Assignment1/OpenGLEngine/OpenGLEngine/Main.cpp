@@ -10,10 +10,17 @@
 #include "PairedSpringForceGeneratorSystem.h"
 #include "FPSControlSystem.h"
 #include "SphereComponent.h"
+/* Bungee */
 #include "BungeeSpawnComponent.h"
 #include "BungeeSpawnSystem.h"
 #include "BungeeCordForceGeneratorSystem.h"
 #include "BungeeCordComponent.h"
+/* Buoyancy */
+#include "BuoyancyComponent.h"
+#include "BuoyancyForceGeneratorSystem.h"
+#include "BuoyancySpawnComponent.h"
+#include "BuoyancySpawnSystem.h"
+/* NBody */
 #include <string>
 #include <thread>
 #include <mutex>
@@ -43,7 +50,7 @@ int main()
 	// Make a player controller
 	auto e = world.createEntity();
 	e.addComponent<FPSControlComponent>();
-
+	
 	auto wall = world.createEntity();
 	wall.addComponent<TransformComponent>(Vector3(0, -15.0f, 15.0f), Vector3(3.0f, 3.0f, 3.0f), Vector3(0, 180, 0));
 	// Add mesh
@@ -53,10 +60,10 @@ int main()
 		"Shaders/fragmentDefault.fs");
 
 	// Uncomment for part 1 
-	MakeBungeeChordSeed(world);
+	//MakeBungeeChordSeed(world);
 
 	// Uncomment for part 2
-	//MakeBucket(world);
+	MakeBucket(world);
 
 	// Create Systems
 	world.getSystemManager().addSystem<RenderingSystem>();
@@ -71,6 +78,8 @@ int main()
 	world.getSystemManager().addSystem<FPSControlSystem>();
 	world.getSystemManager().addSystem<BungeeSpawnSystem>();
 	world.getSystemManager().addSystem<BungeeCordForceGeneratorSystem>();
+	world.getSystemManager().addSystem<BuoyancySpawnSystem>();
+	world.getSystemManager().addSystem<BuoyancyForceGeneratorSystem>();
 
 	float time = glfwGetTime();
 	float stepTime = glfwGetTime();
@@ -102,11 +111,13 @@ int main()
 		world.getSystemManager().getSystem<RotateSystem>().Update(deltaTime);
 		world.getSystemManager().getSystem<ParticleSpawnerSystem>().Update(deltaTime);
 		world.getSystemManager().getSystem<BungeeSpawnSystem>().Update(deltaTime);
+		world.getSystemManager().getSystem<BuoyancySpawnSystem>().Update(deltaTime);
 
 		// Physics
 		// Force Generators
 		world.getSystemManager().getSystem<GravityForceGeneratorSystem>().Update(deltaTime);
 		world.getSystemManager().getSystem<BungeeCordForceGeneratorSystem>().Update(deltaTime);
+		world.getSystemManager().getSystem<BuoyancyForceGeneratorSystem>().Update(deltaTime);
 		world.getSystemManager().getSystem<FixedSpringForceGeneratorSystem>().Update(deltaTime);
 		world.getSystemManager().getSystem<PairedSpringForceGeneratorSystem>().Update(deltaTime);
 
@@ -280,5 +291,5 @@ void MakeBucket(ECSWorld& world) {
 	auto e = world.createEntity();
 	e.addComponent<TransformComponent>(Vector3(-2.5f, -10, -7));
 	e.addComponent<BoxComponent>(10.0f,5.0f,10.0f);
-
+	e.addComponent<BuoyancySpawnComponent>();
 }

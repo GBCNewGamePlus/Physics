@@ -39,6 +39,12 @@ namespace Reality
 				// Draw
 				getWorld().data.renderUtil->DrawModel(mesh.mesh, mesh.vertexShader, mesh.fragmentShader);
 			}
+			else if (e.hasComponent<BuoyancyComponent>()) {
+				const auto &buoyancy = e.getComponent<BuoyancyComponent>();
+				const auto &sphere = e.getComponent<SphereComponent>();
+				getWorld().data.renderUtil->DrawBuoyancySphere(transform.position, sphere.radius, buoyancy.liquidHeight, 
+					Color(0, 1, 0, 1),Color(1, 0, 0, 1));
+			}
 			else if(e.hasComponent<SphereComponent>())
 			{
 				auto &sphere = e.getComponent<SphereComponent>();

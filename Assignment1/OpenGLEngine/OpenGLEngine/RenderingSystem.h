@@ -4,6 +4,7 @@
 #include "MeshComponent.h"
 #include "SphereComponent.h"
 #include "BoxComponent.h"
+#include "BuoyancyComponent.h"
 
 class Shader;
 class Camera;

@@ -334,7 +334,7 @@
     <None Include="Shaders\FragmentBuoyancy.fs">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Shaders\VertexBuoyancy.fs">
+    <None Include="Shaders\VertexBuoyancy.vs">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

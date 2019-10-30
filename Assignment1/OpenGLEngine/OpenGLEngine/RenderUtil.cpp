@@ -339,7 +339,7 @@ namespace Reality
 		buoyancyShader.setVec4("colBelow", glm::vec4(colorBelow.r, colorBelow.g, colorBelow.b, colorBelow.a));
 
 		// bind VBOs
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, (void*)0);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
@@ -373,7 +373,7 @@ namespace Reality
 		primitiveTransparentShader = Shader("Shaders/vertexDefault.vs", "Shaders/FragmentTransparent.fs");
 		primitiveShaderBasic = Shader("Shaders/SimpleVertex.vs", "Shaders/FragmentConstant.fs");
 		textShader = Shader("Shaders/text.vs", "Shaders/text.fs");
-		buoyancyShader = Shader("Shaders/VertexBouyancy.vs", "Shaders/FragmentBuoyancy.fs");
+		buoyancyShader = Shader("Shaders/VertexBuoyancy.vs", "Shaders/FragmentBuoyancy.fs");
 	}
 
 	void RenderUtil::SetupTextRender()
