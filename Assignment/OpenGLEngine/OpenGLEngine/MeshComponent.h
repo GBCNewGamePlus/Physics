@@ -1,19 +1,21 @@
 #pragma once
 namespace Reality
 {
-	struct MeshComponent
+	struct ModelComponent
 	{		
-		MeshComponent() {}
-
 		// Path to mesh
 		std::string mesh;
+		// Model ID
+		int modelId;
 
-		// Path to shader
-		std::string vertexShader;
-		std::string fragmentShader;
+		//// Path to shader
+		//std::string vertexShader;
+		//std::string fragmentShader;
 
 		// Constructor
-		MeshComponent(std::string const _model, std::string const _vertexShader, std::string const _fragmentShader)
-			: mesh(_model), vertexShader(_vertexShader), fragmentShader(_fragmentShader) {}
+		ModelComponent(std::string const _model = "") : mesh(_model)
+		{
+			modelId = -1;
+		}
 	};
 }

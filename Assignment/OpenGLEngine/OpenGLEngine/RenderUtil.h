@@ -5,16 +5,21 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <vector>
+#include <map>
 #include <unordered_map>
 // FreeType
 #include <ft2build.h>
 #include FT_FREETYPE_H
+#include "AssetLoader.h"
 #include "Model.h"
 #include "Shader.h"
 #include "Camera.h"
 #include "Window.h"
 #include "Color.h"
-class Model;
+#define MAX_DIR_LIGHTS 100
+#define MAX_POINT_LIGHTS 100
+#define MAX_SPOT_LIGHTS 100
+
 class Shader;
 namespace Reality
 {
@@ -25,29 +30,55 @@ namespace Reality
 		GLuint Advance;    // Horizontal offset to advance to next glyph
 	};
 
+	struct DirLight {
+		glm::vec4 direction;
+		glm::vec4 ambient;
+		glm::vec4 diffuse;
+		glm::vec4 specular;
+	};
+
+	struct PointLight {
+		glm::vec4 position;
+		glm::vec4 ambient;
+		glm::vec4 diffuse;
+		glm::vec4 specular;
+		float constant;
+		float linear;
+		float quadratic;
+		float padding;
+	};
+
+	struct SpotLight {
+		glm::vec4 position;
+		glm::vec4 direction;
+		glm::vec4 ambient;
+		glm::vec4 diffuse;
+		glm::vec4 specular;
+		float cutOff;
+		float outerCutOff;
+		float constant;
+		float linear;
+		float quadratic;
+		float padding1;
+		float padding2;
+		float padding3;
+	};
+
 	class RenderUtil
 	{
 	public:
-		RenderUtil();
+		RenderUtil(const std::shared_ptr<Reality::AssetLoader> _assetLoader);
 		/*Initialization*/
 		GLFWwindow* InitWindow(int width, int height, const char* title);
 
-		/*Loaders*/
-		Model* LoadModel(const std::string& model);
-		void LoadShader(const std::string& vertex, const std::string& fragment);
-
 		/*Draw*/
-		void DrawModel(const std::string& modelPath, const std::string& vertex, const std::string& fragment);
-		inline Shader& GetShader(const std::string& vertexShader, const std::string& fragmentShader) 
-		{ 
-			return shaderCache.find(vertexShader + fragmentShader) != shaderCache.end() ? *shaderCache.at(vertexShader + fragmentShader) : primitiveShader; 
-		}
+		void DrawModel(int modelID, const glm::vec3& position = glm::vec3(0, 0, 0), const glm::vec3& scale = glm::vec3(1, 1, 1), const glm::vec3& rotation = glm::vec3(0, 0, 0), unsigned int drawMode = GL_FILL);
 
 		/*Draw Primitives*/
-		void DrawSphere(const glm::vec3& position = glm::vec3(0, 0, 0), const float& radius = 1, const Color& color = Color(0, 1, 0, 1));
-		void DrawBuoyancySphere(const glm::vec3& position = glm::vec3(0, 0, 0), const float& radius = 1, const float& liquidHeight=0, const Color& colorAbove = Color(0, 1, 0, 1), const Color& colorBelow = Color(0, 1, 0, 1));
+		void DrawSphere(const glm::vec3& position = glm::vec3(0, 0, 0), float radius = 1, const Color& color = Color(0, 1, 0, 1));
 		void DrawCube(const glm::vec3& position = glm::vec3(0,0,0), const glm::vec3& scale = glm::vec3(1, 1, 1), const glm::vec3& rotation = glm::vec3(0, 0, 0), const Color& color = Color(0,1,0,1));
 		void DrawLine(const glm::vec3& start, const glm::vec3& end, const Color& color = Color(0, 1, 0, 1));
+		void DrawTriangle(const glm::vec3& a, const glm::vec3& b, const glm::vec3& c, const Color& color = Color(0, 1, 0, 1));
 
 		/*TextRender*/
 		void RenderText(std::string text, float x, float y, float scale, Color color);
@@ -55,6 +86,15 @@ namespace Reality
 		/*Window Utils*/
 		void ClearDisplay(GLFWwindow* window);
 		void SwapBuffers(GLFWwindow* window);
+
+		/*Buffer Utils*/
+		void SetFOV(float fov);
+		void UpdateViewMatrix();
+
+		/*Lights*/
+		void UpdateDirLights(const std::vector<DirLight>& lightArray, int numLights);
+		void UpdatePointLights(const std::vector<PointLight>& lightArray, int numLights);
+		void UpdateSpotLights(const std::vector<SpotLight>& lightArray, int numLights);
 
 		/*Camera And Window*/
 		Camera camera;
@@ -66,30 +106,41 @@ namespace Reality
 		inline int GetDrawCalls() { return drawCalls; }
 		inline float GetRenderDelta() { return renderDeltaTime; }
 
-
 	private:
+		/*Pointer to asset loader*/
+		std::shared_ptr<Reality::AssetLoader> assetLoader;
+
 		/*Caches*/
 		std::map<GLchar, Character> Characters;
-		std::unordered_map<std::string, Model*> modelCache;
-		std::unordered_map<std::string, Shader*> shaderCache;
+
+		/*Uniform Buffers*/
+		unsigned int uboMatrices;
+		unsigned int uboDirectionalLights;
+		unsigned int uboPointLights;
+		unsigned int uboSpotLights;
+		void SetupUBOs();
+
+		/*Buffer Utils*/
+		void SetModelTransform(const glm::mat4 model = glm::mat4(1.0f));
+		void SetModelTransform(const glm::vec3& position = glm::vec3(0, 0, 0), const glm::vec3& scale = glm::vec3(1, 1, 1), const glm::vec3& rotation = glm::vec3(0, 0, 0));
 
 		/*Primitive Buffers and Shaders*/
-		unsigned int sphereVBO, sphereVAO, sphereIBO, numIndices;
 		unsigned int cubeVBO, cubeVAO;
+		unsigned int sphereVBO, sphereIBO, sphereVAO, numIndices;
 		unsigned int lineVBO, lineVAO;
+		unsigned int triangleVBO, triangleVAO;
 		GLuint textVAO, textVBO;
-		Shader primitiveShader;
-		Shader primitiveShaderBasic;
-		Shader primitiveTransparentShader;
-		Shader buoyancyShader;
-		Shader textShader;
+		Material primitiveShader = Material(new Shader("Shaders/vertexDefault.vs", "Shaders/FragmentConstant.fs"));
+		Material primitiveShaderBasic = Material(new Shader("Shaders/SimpleVertex.vs", "Shaders/FragmentConstant.fs"));
+		Material textShader = Material(new Shader("Shaders/text.vs", "Shaders/text.fs"));
 
 		/*Set Up Primitives*/
 		void SetupPrimitives();
-		void SetupSpherePrimitive();
+		void SetUpPrimitiveShaders();
 		void SetUpCubePrimitive();
+		void SetUpSpherePrimitive();
 		void SetUpLinePrimitive();
-		void SetupPrimitiveShader();
+		void SetupTrianglePrimitive();
 		void SetupTextRender();
 
 		/*Debug*/

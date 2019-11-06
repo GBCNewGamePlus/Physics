@@ -39,10 +39,7 @@ namespace Reality
 					e.addComponent<ParticleComponent>(1.0f, velocity);
 
 					// Add mesh
-					e.addComponent<MeshComponent>(
-						"Resources/Models/nanosuit/nanosuit.obj",
-						"Shaders/vertexDefault.vs",
-						"Shaders/fragmentDefault.fs");
+					e.addComponent<ModelComponent>("Resources/Models/nanosuit/nanosuit.obj");
 				}
 
 				// Reset timer

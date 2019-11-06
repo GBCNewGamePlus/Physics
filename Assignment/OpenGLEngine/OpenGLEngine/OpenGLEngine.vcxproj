@@ -121,11 +121,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="BungeeCordForceGeneratorSystem.cpp" />
-    <ClCompile Include="BungeeSpawnSystem.cpp" />
-    <ClCompile Include="BuoyancyDensitySystem.cpp" />
-    <ClCompile Include="BuoyancyForceGeneratorSystem.cpp" />
-    <ClCompile Include="BuoyancySpawnSystem.cpp" />
+    <ClCompile Include="AssetLoader.cpp" />
+    <ClCompile Include="CableComponentSystem.cpp" />
+    <ClCompile Include="Color.cpp" />
+    <ClCompile Include="DynamicDirectionalLightSystem.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="DynamicPointLightSystem.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="DynamicSpotLightSystem.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="FixedSpringForceGeneratorSystem.cpp" />
     <ClCompile Include="ForceAccumulatorSystem.cpp" />
     <ClCompile Include="FPSControlSystem.cpp" />
@@ -133,35 +143,61 @@
     <ClCompile Include="GravityForceGeneratorSystem.cpp" />
     <ClCompile Include="InputEventSystem.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Material.cpp" />
+    <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Mix\Component.cpp" />
     <ClCompile Include="Mix\Entity.cpp" />
     <ClCompile Include="Mix\Event.cpp" />
     <ClCompile Include="Mix\System.cpp" />
     <ClCompile Include="Mix\World.cpp" />
-    <ClCompile Include="NBodyForceGeneratorSystem.cpp" />
+    <ClCompile Include="Model.cpp" />
     <ClCompile Include="PairedSpringForceGeneratorSystem.cpp" />
     <ClCompile Include="ParticleContactResolutionSystem.cpp" />
     <ClCompile Include="ParticleSpawnerSystem.cpp" />
     <ClCompile Include="ParticleSystem.cpp" />
     <ClCompile Include="RenderingSystem.cpp" />
     <ClCompile Include="RenderUtil.cpp" />
+    <ClCompile Include="RigidBodySystem.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="RodSystem.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="RotateSystem.cpp" />
-    <ClCompile Include="SphereContactSystem.cpp" />
+    <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="SphereContactGeneratorSystem.cpp" />
+    <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BoxComponent.h" />
-    <ClInclude Include="BungeeCordComponent.h" />
-    <ClInclude Include="BungeeCordForceGeneratorSystem.h" />
-    <ClInclude Include="BungeeSpawnComponent.h" />
-    <ClInclude Include="BungeeSpawnSystem.h" />
-    <ClInclude Include="BuoyancyComponent.h" />
-    <ClInclude Include="BuoyancyDensitySystem.h" />
-    <ClInclude Include="BuoyancyForceGeneratorSystem.h" />
-    <ClInclude Include="BuoyancySpawnComponent.h" />
-    <ClInclude Include="BuoyancySpawnSystem.h" />
+    <ClInclude Include="AssetLoader.h" />
+    <ClInclude Include="CableComponent.h" />
+    <ClInclude Include="CableComponentSystem.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Color.h" />
+    <ClInclude Include="DirectionalLightComponent.h" />
+    <ClInclude Include="DynamicDirectionalLightSystem.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="DynamicPointLightComponent.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="DynamicPointLightSystem.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="DynamicSpotLightComponent.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="DynamicSpotLightSystem.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="ECSConfig.h" />
     <ClInclude Include="FixedSpringComponent.h" />
     <ClInclude Include="FixedSpringForceGeneratorSystem.h" />
@@ -181,26 +217,40 @@
     <ClInclude Include="Mix\World.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="MouseMoveEvent.h" />
-    <ClInclude Include="NBodyComponent.h" />
-    <ClInclude Include="NBodyForceGeneratorSystem.h" />
     <ClInclude Include="OldMain.h" />
     <ClInclude Include="PairedSpringComponent.h" />
     <ClInclude Include="PairedSpringForceGeneratorSystem.h" />
     <ClInclude Include="ParticleComponent.h" />
     <ClInclude Include="ParticleContactComponent.h" />
-    <ClInclude Include="ParticleContactEvent.h" />
     <ClInclude Include="ParticleContactResolutionSystem.h" />
     <ClInclude Include="ParticleSpawnerComponent.h" />
     <ClInclude Include="ParticleSpawnerSystem.h" />
     <ClInclude Include="ParticleSystem.h" />
     <ClInclude Include="RenderingSystem.h" />
     <ClInclude Include="RenderUtil.h" />
+    <ClInclude Include="RigidBodyComponent.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="RigidBodySystem.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="RodComponent.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="RodSystem.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="RotateComponent.h" />
     <ClInclude Include="RotateSystem.h" />
+    <ClInclude Include="Material.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Shadinclude.hpp" />
     <ClInclude Include="SphereComponent.h" />
-    <ClInclude Include="SphereContactSystem.h" />
+    <ClInclude Include="SphereContactGeneratorSystem.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TransformComponent.h" />
@@ -208,16 +258,13 @@
     <ClInclude Include="WorldData.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\FragmentBuoyancy.fs" />
     <None Include="Shaders\FragmentConstant.fs" />
     <None Include="Shaders\fragmentDefault.fs" />
-    <None Include="Shaders\FragmentTransparent.fs" />
     <None Include="Shaders\Lamp.fs" />
     <None Include="Shaders\Lamp.vs" />
     <None Include="Shaders\Lighting_Maps.fs" />
     <None Include="Shaders\Lighting_Maps.vs" />
     <None Include="Shaders\SimpleVertex.vs" />
-    <None Include="Shaders\VertexBuoyancy.vs" />
     <None Include="Shaders\vertexDefault.vs" />
     <None Include="text.fs" />
     <None Include="text.vs" />

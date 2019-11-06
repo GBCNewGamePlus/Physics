@@ -5,18 +5,17 @@ namespace Reality
 {
 	struct ParticleComponent
 	{
-		ParticleComponent(float mass = 1.0f, Vector3 _velocity = Vector3(0,0,0)) :
-			velocity(_velocity)
+		ParticleComponent(float mass = 1.0f, Vector3 _velocity = Vector3(0,0,0), float _gravityScale = 1) :
+			velocity(_velocity), gravityScale(_gravityScale)
 		{
 			inverseMass = 1 / mass;
-			Mass = mass;
 			accelaration = Vector3(0, 0, 0);
 			forceAccumulator = Vector3(0, 0, 0);
 		}
 		Vector3 velocity;
 		Vector3 accelaration;
 		float inverseMass;
-		float Mass;
+		float gravityScale;
 		inline void AddForce(Vector3 force)
 		{
 			forceAccumulator += force;

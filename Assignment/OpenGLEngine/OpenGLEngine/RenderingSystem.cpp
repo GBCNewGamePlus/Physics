@@ -1,60 +1,52 @@
 #include "RenderingSystem.h"
 #include "Shader.h"
 #include "Camera.h"
+#include <glm/gtx/euler_angles.hpp> 
 
 namespace Reality
 {
 	RenderingSystem::RenderingSystem()
 	{
 		requireComponent<TransformComponent>();
-		//requireComponent<MeshComponent>();
+		requireComponent<ModelComponent>();
 	}
 
 	void RenderingSystem::Update(float deltaTime)
 	{
+		if (glfwGetKey(getWorld().data.renderUtil->window->glfwWindow, GLFW_KEY_F1) == GLFW_PRESS && !drawModeChanged)
+		{
+			drawMode++;
+			drawMode = drawMode % 2;
+			drawModeChanged = true;
+		}
+		else if (glfwGetKey(getWorld().data.renderUtil->window->glfwWindow, GLFW_KEY_F1) == GLFW_RELEASE)
+		{
+			drawModeChanged = false;
+		}
 		for (auto e : getEntities()) 
 		{
 			const auto transform = e.getComponent<TransformComponent>();
-			if (e.hasComponent<MeshComponent>()) {
-				auto &mesh = e.getComponent<MeshComponent>();
-				getWorld().data.renderUtil->GetShader(mesh.vertexShader, mesh.fragmentShader).use();
+			auto &mesh = e.getComponent<ModelComponent>();
 
-				// view/projection transformations
-				float aspectRatio = (float)getWorld().data.renderUtil->window->width / (float)getWorld().data.renderUtil->window->height;
-				glm::mat4 projection = glm::perspective(glm::radians(getWorld().data.renderUtil->camera.Zoom), aspectRatio, 0.1f, 100.0f);
-				glm::mat4 view = getWorld().data.renderUtil->camera.GetViewMatrix();
-
-				// world transformation
-				glm::mat4 model = glm::mat4(1.0f);
-				model = glm::translate(model, transform.position);
-				model = glm::scale(model, transform.scale);
-				model = glm::rotate(model, glm::radians(transform.eulerAngles.z), Vector3(0, 0, 1));
-				model = glm::rotate(model, glm::radians(transform.eulerAngles.y), Vector3(0, 1, 0));
-				model = glm::rotate(model, glm::radians(transform.eulerAngles.x), Vector3(1, 0, 0));
-
-				getWorld().data.renderUtil->GetShader(mesh.vertexShader, mesh.fragmentShader).setMat4("projection", projection);
-				getWorld().data.renderUtil->GetShader(mesh.vertexShader, mesh.fragmentShader).setMat4("view", view);
-				getWorld().data.renderUtil->GetShader(mesh.vertexShader, mesh.fragmentShader).setMat4("model", model);
-
-				// Draw
-				getWorld().data.renderUtil->DrawModel(mesh.mesh, mesh.vertexShader, mesh.fragmentShader);
-			}
-			else if (e.hasComponent<BuoyancyComponent>()) {
-				const auto &buoyancy = e.getComponent<BuoyancyComponent>();
-				const auto &sphere = e.getComponent<SphereComponent>();
-				getWorld().data.renderUtil->DrawBuoyancySphere(transform.position, sphere.radius, buoyancy.liquidHeight, 
-					/* Yellowish for not below water*/  /* Blueish for below water */
-					Color(1, 1, 0.88f, 0.5),            Color(0.529f, 0.808f, 0.922f, 0.5));
-			}
-			else if(e.hasComponent<SphereComponent>())
+			getWorld().data.renderUtil->SetFOV(45);
+			getWorld().data.renderUtil->UpdateViewMatrix();
+			if (getWorld().data.assetLoader->ModelsLoaded())
 			{
-				auto &sphere = e.getComponent<SphereComponent>();
-				getWorld().data.renderUtil->DrawSphere(transform.position, sphere.radius, Color(0,1,0,1));
+				getWorld().data.assetLoader->SetLight(getWorld().data.renderUtil->camera.Position);
 			}
-			else if (e.hasComponent<BoxComponent>()) {
-				auto &box = e.getComponent<BoxComponent>();
-				getWorld().data.renderUtil->DrawCube(transform.position, transform.scale, Vector3(0,0,0), Color(0, 1, 0, 0.3f));
+			if (mesh.modelId < 0)
+			{
+				mesh.modelId = getWorld().data.assetLoader->GetModelId(mesh.mesh);
 			}
+			if(mesh.modelId >= 0)
+			{ 
+				getWorld().data.renderUtil->DrawModel(mesh.modelId, transform.position, transform.scale, transform.eulerAngles, drawModes[drawMode]);
+			}
+
+			// Draw
+			//getWorld().data.renderUtil->DrawCube(transform.position, Vector3(10,10,10), transform.eulerAngles);
+			//getWorld().data.renderUtil->DrawCube(transform.position + Vector3(0, transform.scale.y , 0) * 7.5f, transform.scale * 15.0f, transform.eulerAngles);
+			//getWorld().data.renderUtil->DrawLine(transform.position - Vector3(1, 1, 1), transform.position + Vector3(1, 1, 1));
 		}
 	}
 }

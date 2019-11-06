@@ -2,19 +2,23 @@
 #include <iostream>
 #include <glm/gtx/vector_angle.hpp>
 #include <mutex>
+#include <future>
 //#include "Model.h"
 //#include "Shader.h"
 
 namespace Reality
 {
-	RenderUtil::RenderUtil()
+	RenderUtil::RenderUtil(const std::shared_ptr<Reality::AssetLoader> _assetLoader) : assetLoader(_assetLoader)
 	{
 		window = std::make_unique<Window>();
 		window->glfwWindow = InitWindow(window->width, window->height, "RealityEngine-v1.0");
-		SetupPrimitiveShader();
-		SetupSpherePrimitive();
+		//assetLoader = std::make_unique<AssetLoader>();
+		SetupUBOs();
+		SetUpPrimitiveShaders();
 		SetUpCubePrimitive();
+		SetUpSpherePrimitive();
 		SetUpLinePrimitive();
+		SetupTrianglePrimitive();
 		SetupTextRender();
 	}
 
@@ -28,9 +32,9 @@ namespace Reality
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-#ifdef __APPLE__
+		#ifdef __APPLE__
 		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-#endif
+		#endif
 
 		// glfw window creation
 		// --------------------
@@ -60,32 +64,58 @@ namespace Reality
 		return window;
 	}
 
-	Model* RenderUtil::LoadModel(const std::string& model)
+	void RenderUtil::SetupUBOs()
 	{
-		Model* newModel = new Model(model);
-		modelCache[model] = newModel;
-		return newModel;
+		// Matrices
+		glGenBuffers(1, &uboMatrices);
+
+		glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
+		glBufferData(GL_UNIFORM_BUFFER, 3 * sizeof(glm::mat4), NULL, GL_STATIC_DRAW);
+		glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+		glBindBufferRange(GL_UNIFORM_BUFFER, 0, uboMatrices, 0, 3 * sizeof(glm::mat4));
+
+		// Dir Lights
+		glGenBuffers(1, &uboDirectionalLights);
+
+		glBindBuffer(GL_UNIFORM_BUFFER, uboDirectionalLights);
+		glBufferData(GL_UNIFORM_BUFFER, MAX_DIR_LIGHTS * sizeof(DirLight) + sizeof(int), NULL, GL_STATIC_DRAW);
+		glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+		glBindBufferRange(GL_UNIFORM_BUFFER, 1, uboDirectionalLights, 0, MAX_DIR_LIGHTS * sizeof(DirLight) + sizeof(int));
+
+		// Point Lights
+		glGenBuffers(1, &uboPointLights);
+
+		glBindBuffer(GL_UNIFORM_BUFFER, uboPointLights);
+		glBufferData(GL_UNIFORM_BUFFER, MAX_POINT_LIGHTS * sizeof(PointLight) + sizeof(int), NULL, GL_STATIC_DRAW);
+		glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+		glBindBufferRange(GL_UNIFORM_BUFFER, 2, uboPointLights, 0, MAX_POINT_LIGHTS * sizeof(PointLight) + sizeof(int));
+
+		// Spot Lights
+		glGenBuffers(1, &uboSpotLights);
+
+		glBindBuffer(GL_UNIFORM_BUFFER, uboSpotLights);
+		glBufferData(GL_UNIFORM_BUFFER, MAX_SPOT_LIGHTS * sizeof(SpotLight) + sizeof(int), NULL, GL_STATIC_DRAW);
+		glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+		glBindBufferRange(GL_UNIFORM_BUFFER, 3, uboSpotLights, 0, MAX_SPOT_LIGHTS * sizeof(SpotLight) + sizeof(int));
 	}
 
-	void RenderUtil::LoadShader(const std::string& vertex, const std::string& fragment)
-	{
-		shaderCache[vertex + fragment] = new Shader(vertex.c_str(), fragment.c_str());
-	}
-
-	void RenderUtil::DrawModel(const std::string& model, const std::string& vertex, const std::string& fragment)
+	void RenderUtil::DrawModel(int modelID, const glm::vec3& position, const glm::vec3& scale, const glm::vec3& rotation, unsigned int drawMode)
 	{
 		float time = glfwGetTime();
-		if (modelCache.find(model) != modelCache.end())
+		if (assetLoader->IsValid(modelID))
 		{
-			Model* modelToDraw = modelCache[model];
-			if (shaderCache.find(vertex + fragment) != shaderCache.end())
-			{
-				modelToDraw->Draw(*shaderCache[vertex + fragment]);
-			}
-			else
-			{
-				modelToDraw->Draw(primitiveShader);
-			}
+			glEnable(GL_DEPTH_TEST);
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			glPolygonMode(GL_FRONT_AND_BACK, drawMode);
+			SetModelTransform(position, scale, rotation);
+			Model* modelToDraw = assetLoader->GetModel(modelID);
+			modelToDraw->Draw();
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 			verts += modelToDraw->verts;
 			triangles += modelToDraw->verts / 3;
 			drawCalls += modelToDraw->meshes.size();
@@ -95,7 +125,7 @@ namespace Reality
 
 	void RenderUtil::ClearDisplay(GLFWwindow* window)
 	{
-		glClearColor(0.0f, 0.4f, 0.4f, 1.0f);
+		glClearColor(0.0f, 0.025f, 0.05f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		verts = 0;
 		triangles = 0;
@@ -107,6 +137,13 @@ namespace Reality
 	void RenderUtil::SwapBuffers(GLFWwindow* window)
 	{
 		glfwSwapBuffers(window);
+	}
+
+	void RenderUtil::SetUpPrimitiveShaders()
+	{
+		primitiveShader.Init();
+		primitiveShaderBasic.Init();
+		textShader.Init();
 	}
 
 	void RenderUtil::SetUpCubePrimitive()
@@ -173,15 +210,13 @@ namespace Reality
 		glEnableVertexAttribArray(2);
 	}
 
-	void RenderUtil::SetupSpherePrimitive()
+	void RenderUtil::SetUpSpherePrimitive()
 	{
 		std::vector<float> VNT;
-		std::vector<int> indices;
-
 		float radius = 1;
-		float PI = 3.141592f;
-		int sectorCount = 72;
-		int stackCount = 24;
+		float PI = 3.14f;
+		int sectorCount = 18;
+		int stackCount = 6;
 
 		float x, y, z, xy;                              // vertex position
 		float nx, ny, nz, lengthInv = 1.0f / radius;    // vertex normal
@@ -226,6 +261,7 @@ namespace Reality
 			}
 		}
 
+		std::vector<int> indices;
 		int k1, k2;
 		for (int i = 0; i < stackCount; ++i)
 		{
@@ -253,31 +289,31 @@ namespace Reality
 			}
 		}
 
+		numIndices = indices.size();
 
+		// Bind Buffers
+		glGenVertexArrays(1, &sphereVAO);
+		glBindVertexArray(sphereVAO);
 
+		// copy interleaved vertex data (V/N/T) to VBO
 		glGenBuffers(1, &sphereVBO);
-		glBindBuffer(GL_ARRAY_BUFFER, sphereVBO);           // for vertex data
+		glBindBuffer(GL_ARRAY_BUFFER, sphereVBO);       // for vertex data
 		glBufferData(GL_ARRAY_BUFFER,                   // target
-			VNT.size() * sizeof(float),			// data size, # of bytes
-			&VNT[0],								// ptr to vertex data
+			VNT.size() * sizeof(float),									// data size, # of bytes
+			&VNT[0],									// ptr to vertex data
 			GL_STATIC_DRAW);							// usage
 
 		// copy index data to VBO
 		glGenBuffers(1, &sphereIBO);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sphereIBO);   // for index data
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER,				// target
-			indices.size() * sizeof(int),					// data size, # of bytes
+			indices.size() * sizeof(int),									// data size, # of bytes
 			&indices[0],									// ptr to index data
 			GL_STATIC_DRAW);								// usage
 
-		numIndices = indices.size();
-
-		glGenVertexArrays(1, &sphereVAO);
-		glBindVertexArray(sphereVAO);
-
 		// bind VBOs
-		glBindBuffer(GL_ARRAY_BUFFER, sphereVBO);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sphereIBO);
+		//glBindBuffer(GL_ARRAY_BUFFER, sphereVBO);
+		//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sphereIBO);
 
 		// activate attrib arrays
 		glEnableVertexAttribArray(0);
@@ -285,66 +321,11 @@ namespace Reality
 		glEnableVertexAttribArray(2);
 
 		// set attrib arrays with stride and offset
-		int stride = 8 * sizeof(float) ;     // should be 32 bytes
+		int stride = sizeof(float) * 8;     // should be 32 bytes
 		glVertexAttribPointer(0, 3, GL_FLOAT, false, stride, (void*)0);
 		glVertexAttribPointer(1, 3, GL_FLOAT, false, stride, (void*)(sizeof(float) * 3));
 		glVertexAttribPointer(2, 2, GL_FLOAT, false, stride, (void*)(sizeof(float) * 6));
-
 	}
-
-	void RenderUtil::DrawSphere(const glm::vec3& position, const float& radius, const Color& color)
-	{
-		glBindVertexArray(sphereVAO);
-		primitiveShader.use();
-		// view/projection transformations
-		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)window->width / (float)window->height, 0.1f, 100.0f);
-		glm::mat4 view = camera.GetViewMatrix();
-		primitiveShader.setMat4("projection", projection);
-		primitiveShader.setMat4("view", view);
-
-		// world transformation
-		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::translate(model, position);
-		model = glm::scale(model, glm::vec3(radius, radius, radius));
-		primitiveShader.setMat4("model", model);
-
-		primitiveShader.setVec3("col", glm::vec3(color.r, color.g, color.b));
-
-		// bind VBOs
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT,(void*)0);
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
-	}
-
-	void RenderUtil::DrawBuoyancySphere(const glm::vec3& position, const float& radius, const float& liquidHeight, 
-		const Color& colorAbove, const Color& colorBelow)
-	{
-		glBindVertexArray(sphereVAO);
-		buoyancyShader.use();
-		// view/projection transformations
-		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)window->width / (float)window->height, 0.1f, 100.0f);
-		glm::mat4 view = camera.GetViewMatrix();
-		buoyancyShader.setMat4("projection", projection);
-		buoyancyShader.setMat4("view", view);
-
-		// world transformation
-		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::translate(model, position);
-		model = glm::scale(model, glm::vec3(radius, radius, radius));
-		buoyancyShader.setMat4("model", model);
-
-		buoyancyShader.setFloat("liquidHeight", liquidHeight);
-		buoyancyShader.setVec4("colAbove", glm::vec4(colorAbove.r, colorAbove.g, colorAbove.b, colorAbove.a));
-		buoyancyShader.setVec4("colBelow", glm::vec4(colorBelow.r, colorBelow.g, colorBelow.b, colorBelow.a));
-
-		// bind VBOs
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, (void*)0);
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
-	}
-
 
 	void RenderUtil::SetUpLinePrimitive()
 	{
@@ -367,13 +348,10 @@ namespace Reality
 		glEnableVertexAttribArray(0);
 	}
 
-	void RenderUtil::SetupPrimitiveShader()
+	void RenderUtil::SetupTrianglePrimitive()
 	{
-		primitiveShader = Shader("Shaders/vertexDefault.vs", "Shaders/FragmentConstant.fs");
-		primitiveTransparentShader = Shader("Shaders/vertexDefault.vs", "Shaders/FragmentTransparent.fs");
-		primitiveShaderBasic = Shader("Shaders/SimpleVertex.vs", "Shaders/FragmentConstant.fs");
-		textShader = Shader("Shaders/text.vs", "Shaders/text.fs");
-		buoyancyShader = Shader("Shaders/VertexBuoyancy.vs", "Shaders/FragmentBuoyancy.fs");
+		glGenVertexArrays(1, &triangleVAO);
+		glGenBuffers(1, &triangleVBO);
 	}
 
 	void RenderUtil::SetupTextRender()
@@ -517,34 +495,36 @@ namespace Reality
 	{
 		float time = glfwGetTime();
 		glBindVertexArray(cubeVAO);
-		primitiveTransparentShader.use();
-		// view/projection transformations
-		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)window->width / (float)window->height, 0.1f, 100.0f);
-		glm::mat4 view = camera.GetViewMatrix();
-		primitiveTransparentShader.setMat4("projection", projection);
-		primitiveTransparentShader.setMat4("view", view);
+		primitiveShader.use();
 
-		// world transformation
-		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::translate(model, position);
-		model = glm::scale(model, scale);
-		model = glm::rotate(model, glm::radians(rotation.z), glm::vec3(0, 0, 1));
-		model = glm::rotate(model, glm::radians(rotation.y), glm::vec3(0, 1, 0));
-		model = glm::rotate(model, glm::radians(rotation.x), glm::vec3(1, 0, 0));
-		primitiveTransparentShader.setMat4("model", model);
+		SetModelTransform(position, scale, rotation);
 
-		primitiveTransparentShader.setVec4("col", glm::vec4(color.r, color.g, color.b, color.a));
+		primitiveShader.setVec3("col", glm::vec3(color.r, color.g, color.b));
 
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		verts += 36;
 		triangles += 12;
 		drawCalls++;
-		glDisable(GL_BLEND);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		renderDeltaTime += glfwGetTime() - time;
+	}
+
+	void RenderUtil::DrawSphere(const glm::vec3& position, float radius, const Color& color)
+	{
+		glBindVertexArray(sphereVAO);
+		primitiveShader.use();
+
+		SetModelTransform(position, glm::vec3(radius, radius, radius), glm::vec3(0,0,0));
+
+		primitiveShader.setVec3("col", glm::vec3(color.r, color.g, color.b));
+		// draw a sphere with VBO
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		glDrawElements(GL_TRIANGLES,        // primitive type
+			numIndices,						// # of indices
+			GL_UNSIGNED_INT,                // data type
+			(void*)0);                      // offset to indices
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 
 	void RenderUtil::DrawLine(const glm::vec3& start, const glm::vec3& end, const Color& color)
@@ -552,28 +532,17 @@ namespace Reality
 		float time = glfwGetTime();
 		glBindVertexArray(lineVAO);
 		primitiveShaderBasic.use();
-		// view/projection transformations
-		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)window->width / (float)window->height, 0.1f, 100.0f);
-		glm::mat4 view = camera.GetViewMatrix();
-		primitiveShaderBasic.setMat4("projection", projection);
-		primitiveShaderBasic.setMat4("view", view);
 
 		glm::vec3 position = (start + end) * 0.5f;
 		float scale = glm::length(start - end);
 		glm::vec3 axis = glm::cross(glm::vec3(1, 0, 0), end - start);
 		axis = glm::normalize(axis);
 		float proj = glm::dot(end - start, glm::vec3(1, 0, 0));
-		/*glm::vec3 projVec = proj * glm::vec3(1, 0, 0);
-		glm::vec3 perpVec = end - start - proj;
-		float perp = 
-		float angle = atan2(glm::length(perp), glm::length(proj));*/
-		// world transformation
-		//float angle = glm::ori
 		glm::mat4 model = glm::mat4(1.0f);
 		model = glm::translate(model, start);
 		model = glm::rotate(model, glm::orientedAngle(glm::vec3(1, 0, 0), glm::normalize(end - start), axis), axis);
 		model = glm::scale(model, glm::vec3(scale, scale, scale));
-		primitiveShaderBasic.setMat4("model", model);
+		SetModelTransform(model);
 
 		primitiveShaderBasic.setVec3("col", glm::vec3(color.r, color.g, color.b));
 
@@ -584,5 +553,92 @@ namespace Reality
 		drawCalls++;
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		renderDeltaTime += glfwGetTime() - time;
+	}
+
+	void RenderUtil::DrawTriangle(const glm::vec3& a, const glm::vec3& b, const glm::vec3& c, const Color& color)
+	{
+		float time = glfwGetTime();
+
+		glm::vec3 vertices[] = {a,b,c};
+
+		glBindBuffer(GL_ARRAY_BUFFER, triangleVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+		glBindVertexArray(triangleVAO);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(0);
+
+		primitiveShader.use();
+
+		SetModelTransform(glm::mat4(1.0f));
+
+		primitiveShader.setVec3("col", glm::vec3(color.r, color.g, color.b));
+
+		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		glDrawArrays(GL_TRIANGLES, 0, 3);
+		verts += 3;
+		triangles += 1;
+		drawCalls++;
+		//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		renderDeltaTime += glfwGetTime() - time;
+	}
+
+	void RenderUtil::SetFOV(float fov)
+	{
+		glm::mat4 projection = glm::perspective(glm::radians(fov), (float)window->width / (float)window->height, 0.1f, 1000.0f);
+		glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
+		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(projection));
+		glBindBuffer(GL_UNIFORM_BUFFER, 0);
+	}
+
+	void RenderUtil::UpdateViewMatrix()
+	{
+		glm::mat4 view = camera.GetViewMatrix();
+		glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
+		glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(view));
+		glBindBuffer(GL_UNIFORM_BUFFER, 0);
+	}
+
+	void RenderUtil::SetModelTransform(const glm::mat4 model)
+	{
+		glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
+		glBufferSubData(GL_UNIFORM_BUFFER, 2 * sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(model));
+		glBindBuffer(GL_UNIFORM_BUFFER, 0);
+	}
+
+	void RenderUtil::SetModelTransform(const glm::vec3& position, const glm::vec3& scale, const glm::vec3& rotation)
+	{
+		glm::mat4 model = glm::mat4(1.0f);
+		model = glm::translate(model, position);
+		model = glm::scale(model, scale);
+		//model = glm::eulerAngleXYZ(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z) * model;
+		model = glm::rotate(model, glm::radians(rotation.z), glm::vec3(0, 0, 1));
+		model = glm::rotate(model, glm::radians(rotation.y), glm::vec3(0, 1, 0));
+		model = glm::rotate(model, glm::radians(rotation.x), glm::vec3(1, 0, 0));
+		SetModelTransform(model);
+	}
+
+	void RenderUtil::UpdateDirLights(const std::vector<DirLight>& lightArray, int numLights)
+	{
+		glBindBuffer(GL_UNIFORM_BUFFER, uboDirectionalLights);
+		glBufferSubData(GL_UNIFORM_BUFFER, 0, numLights * sizeof(DirLight), &lightArray[0]);
+		glBufferSubData(GL_UNIFORM_BUFFER, MAX_DIR_LIGHTS * sizeof(DirLight), sizeof(int), &numLights);
+		glBindBuffer(GL_UNIFORM_BUFFER, 0);
+	}
+
+	void RenderUtil::UpdatePointLights(const std::vector<PointLight>& lightArray, int numLights)
+	{
+		glBindBuffer(GL_UNIFORM_BUFFER, uboPointLights);
+		glBufferSubData(GL_UNIFORM_BUFFER, 0, numLights * sizeof(PointLight), &lightArray[0]);
+		glBufferSubData(GL_UNIFORM_BUFFER, MAX_POINT_LIGHTS * sizeof(PointLight), sizeof(int), &numLights);
+		glBindBuffer(GL_UNIFORM_BUFFER, 0);
+	}
+
+	void RenderUtil::UpdateSpotLights(const std::vector<SpotLight>& lightArray, int numLights)
+	{
+		glBindBuffer(GL_UNIFORM_BUFFER, uboSpotLights);
+		glBufferSubData(GL_UNIFORM_BUFFER, 0, numLights * sizeof(SpotLight), &lightArray[0]);
+		glBufferSubData(GL_UNIFORM_BUFFER, MAX_SPOT_LIGHTS * sizeof(SpotLight), sizeof(int), &numLights);
+		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 	}
 }

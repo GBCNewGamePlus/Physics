@@ -30,7 +30,7 @@ namespace Reality
 
 				particle.AddForce(-spring.springConstant * x * direction);
 
-				
+				/*
 				float g = 1.0f / (1.0f +  pow(abs(x), 0.5f));
 				float r = 1 - g;
 
@@ -45,7 +45,7 @@ namespace Reality
 				}
 
 				getWorld().data.renderUtil->DrawLine(
-					transform.position, transform.position + length * direction, color);
+					transform.position, transform.position + length * direction, color);*/
 			}
 		}
 

@@ -43,21 +43,6 @@
     <Filter Include="Input">
       <UniqueIdentifier>{09a9940b-c17f-43c0-becf-d8da8efa3d30}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Physics\Springs">
-      <UniqueIdentifier>{11cdde08-0b75-4de2-957b-05836f1313c9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Physics\Collision">
-      <UniqueIdentifier>{61109ae4-9506-4518-b90a-3d615438b18b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Physics\Bungee">
-      <UniqueIdentifier>{568ea84b-b258-4e40-b8b7-f2b65142cd4b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Physics\Buoyancy">
-      <UniqueIdentifier>{c2c6406f-2956-4d32-b3ae-8b5e51568260}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Physics\NBody">
-      <UniqueIdentifier>{aff3845a-77ec-40d6-afa6-b78d038bdee7}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="glad.c">
@@ -105,41 +90,62 @@
     <ClCompile Include="ForceAccumulatorSystem.cpp">
       <Filter>Physics\Particles</Filter>
     </ClCompile>
+    <ClCompile Include="FixedSpringForceGeneratorSystem.cpp">
+      <Filter>Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="PairedSpringForceGeneratorSystem.cpp">
+      <Filter>Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticleContactResolutionSystem.cpp">
+      <Filter>Physics</Filter>
+    </ClCompile>
     <ClCompile Include="InputEventSystem.cpp">
       <Filter>Input</Filter>
     </ClCompile>
     <ClCompile Include="FPSControlSystem.cpp">
       <Filter>TestCS</Filter>
     </ClCompile>
-    <ClCompile Include="FixedSpringForceGeneratorSystem.cpp">
-      <Filter>Physics\Springs</Filter>
+    <ClCompile Include="Model.cpp">
+      <Filter>Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="PairedSpringForceGeneratorSystem.cpp">
-      <Filter>Physics\Springs</Filter>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="ParticleContactResolutionSystem.cpp">
-      <Filter>Physics\Collision</Filter>
+    <ClCompile Include="Material.cpp">
+      <Filter>Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="SphereContactSystem.cpp">
-      <Filter>Physics\Collision</Filter>
+    <ClCompile Include="AssetLoader.cpp">
+      <Filter>Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="BungeeSpawnSystem.cpp">
-      <Filter>Physics\Bungee</Filter>
+    <ClCompile Include="Shader.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="BungeeCordForceGeneratorSystem.cpp">
-      <Filter>Physics\Bungee</Filter>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="BuoyancySpawnSystem.cpp">
-      <Filter>Physics\Buoyancy</Filter>
+    <ClCompile Include="DynamicDirectionalLightSystem.cpp">
+      <Filter>Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="BuoyancyForceGeneratorSystem.cpp">
-      <Filter>Physics\Buoyancy</Filter>
+    <ClCompile Include="DynamicPointLightSystem.cpp">
+      <Filter>Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="BuoyancyDensitySystem.cpp">
-      <Filter>Physics\Buoyancy</Filter>
+    <ClCompile Include="DynamicSpotLightSystem.cpp">
+      <Filter>Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="NBodyForceGeneratorSystem.cpp">
-      <Filter>Physics\NBody</Filter>
+    <ClCompile Include="SphereContactGeneratorSystem.cpp">
+      <Filter>TestCS</Filter>
+    </ClCompile>
+    <ClCompile Include="CableComponentSystem.cpp">
+      <Filter>TestCS</Filter>
+    </ClCompile>
+    <ClCompile Include="RodSystem.cpp">
+      <Filter>TestCS</Filter>
+    </ClCompile>
+    <ClCompile Include="RigidBodySystem.cpp">
+      <Filter>Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Color.cpp">
+      <Filter>Rendering</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -188,9 +194,6 @@
     <ClInclude Include="RenderingSystem.h">
       <Filter>Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="Shader.h">
-      <Filter>Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="Mesh.h">
       <Filter>Rendering</Filter>
     </ClInclude>
@@ -236,6 +239,24 @@
     <ClInclude Include="ForceAccumulatorSystem.h">
       <Filter>Physics\Particles</Filter>
     </ClInclude>
+    <ClInclude Include="FixedSpringComponent.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedSpringForceGeneratorSystem.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="PairedSpringComponent.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="PairedSpringForceGeneratorSystem.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleContactComponent.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleContactResolutionSystem.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
     <ClInclude Include="InputEventSystem.h">
       <Filter>Input</Filter>
     </ClInclude>
@@ -248,68 +269,56 @@
     <ClInclude Include="FPSControlSystem.h">
       <Filter>TestCS</Filter>
     </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="AssetLoader.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectionalLightComponent.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="DynamicDirectionalLightSystem.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="DynamicPointLightComponent.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="DynamicPointLightSystem.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="DynamicSpotLightComponent.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="DynamicSpotLightSystem.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
     <ClInclude Include="SphereComponent.h">
       <Filter>TestCS</Filter>
     </ClInclude>
-    <ClInclude Include="FixedSpringComponent.h">
-      <Filter>Physics\Springs</Filter>
-    </ClInclude>
-    <ClInclude Include="FixedSpringForceGeneratorSystem.h">
-      <Filter>Physics\Springs</Filter>
-    </ClInclude>
-    <ClInclude Include="PairedSpringComponent.h">
-      <Filter>Physics\Springs</Filter>
-    </ClInclude>
-    <ClInclude Include="PairedSpringForceGeneratorSystem.h">
-      <Filter>Physics\Springs</Filter>
-    </ClInclude>
-    <ClInclude Include="ParticleContactComponent.h">
-      <Filter>Physics\Collision</Filter>
-    </ClInclude>
-    <ClInclude Include="ParticleContactEvent.h">
-      <Filter>Physics\Collision</Filter>
-    </ClInclude>
-    <ClInclude Include="ParticleContactResolutionSystem.h">
-      <Filter>Physics\Collision</Filter>
-    </ClInclude>
-    <ClInclude Include="SphereContactSystem.h">
-      <Filter>Physics\Collision</Filter>
-    </ClInclude>
-    <ClInclude Include="BungeeSpawnSystem.h">
-      <Filter>Physics\Bungee</Filter>
-    </ClInclude>
-    <ClInclude Include="BungeeSpawnComponent.h">
-      <Filter>Physics\Bungee</Filter>
-    </ClInclude>
-    <ClInclude Include="BungeeCordComponent.h">
-      <Filter>Physics\Bungee</Filter>
-    </ClInclude>
-    <ClInclude Include="BungeeCordForceGeneratorSystem.h">
-      <Filter>Physics\Bungee</Filter>
-    </ClInclude>
-    <ClInclude Include="BoxComponent.h">
+    <ClInclude Include="SphereContactGeneratorSystem.h">
       <Filter>TestCS</Filter>
     </ClInclude>
-    <ClInclude Include="BuoyancySpawnComponent.h">
-      <Filter>Physics\Buoyancy</Filter>
+    <ClInclude Include="CableComponent.h">
+      <Filter>TestCS</Filter>
     </ClInclude>
-    <ClInclude Include="BuoyancySpawnSystem.h">
-      <Filter>Physics\Buoyancy</Filter>
+    <ClInclude Include="CableComponentSystem.h">
+      <Filter>TestCS</Filter>
     </ClInclude>
-    <ClInclude Include="BuoyancyComponent.h">
-      <Filter>Physics\Buoyancy</Filter>
+    <ClInclude Include="RodComponent.h">
+      <Filter>TestCS</Filter>
     </ClInclude>
-    <ClInclude Include="BuoyancyForceGeneratorSystem.h">
-      <Filter>Physics\Buoyancy</Filter>
+    <ClInclude Include="RodSystem.h">
+      <Filter>TestCS</Filter>
     </ClInclude>
-    <ClInclude Include="BuoyancyDensitySystem.h">
-      <Filter>Physics\Buoyancy</Filter>
+    <ClInclude Include="RigidBodyComponent.h">
+      <Filter>Physics</Filter>
     </ClInclude>
-    <ClInclude Include="NBodyForceGeneratorSystem.h">
-      <Filter>Physics\NBody</Filter>
-    </ClInclude>
-    <ClInclude Include="NBodyComponent.h">
-      <Filter>Physics\NBody</Filter>
+    <ClInclude Include="RigidBodySystem.h">
+      <Filter>Physics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -341,15 +350,6 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="text.fs">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="Shaders\FragmentTransparent.fs">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="Shaders\FragmentBuoyancy.fs">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="Shaders\VertexBuoyancy.vs">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
