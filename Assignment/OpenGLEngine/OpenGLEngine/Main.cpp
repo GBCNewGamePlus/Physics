@@ -28,9 +28,6 @@ using namespace Reality;
 void LoadShaders(ECSWorld& world);
 void LoadModels(ECSWorld& world);
 void MakeABunchaObjects(ECSWorld& world);
-void MakeABunchaSprings(ECSWorld& world);
-void MakeABunchaSpheres(ECSWorld& world);
-void MakeACable(ECSWorld& world);
 void MakeCablesAndRods(ECSWorld& world);
 void SetupLights(ECSWorld& world);
 
@@ -66,7 +63,7 @@ int main()
 	world.getSystemManager().addSystem<GravityForceGeneratorSystem>();
 	world.getSystemManager().addSystem<FixedSpringForceGeneratorSystem>();
 	world.getSystemManager().addSystem<PairedSpringForceGeneratorSystem>();
-	world.getSystemManager().addSystem<SphereContactGeneratorSystem>();
+	//world.getSystemManager().addSystem<SphereContactGeneratorSystem>();
 	world.getSystemManager().addSystem<CableComponentSystem>();
 	world.getSystemManager().addSystem<RodSystem>();
 	world.getSystemManager().addSystem<ParticleContactResolutionSystem>();
@@ -131,7 +128,7 @@ int main()
 
 		// Physics Solvers
 
-		world.getSystemManager().getSystem<SphereContactGeneratorSystem>().Update(fixedDeltaTime);
+		//world.getSystemManager().getSystem<SphereContactGeneratorSystem>().Update(fixedDeltaTime);
 		world.getSystemManager().getSystem<CableComponentSystem>().Update(fixedDeltaTime);
 		world.getSystemManager().getSystem<RodSystem>().Update(fixedDeltaTime);
 		world.getSystemManager().getSystem<ParticleContactResolutionSystem>().Update(fixedDeltaTime);
@@ -217,98 +214,6 @@ void MakeABunchaObjects(ECSWorld& world)
 	e.addComponent<ModelComponent>("Resources/Models/nanosuit/nanosuit.obj");
 	e.addComponent<RotateComponent>(0, 40, 0);
 }
-
-void MakeABunchaSprings(ECSWorld& world)
-{
-	auto e = world.createEntity();
-	float yOffset = 30;
-	e.addComponent<TransformComponent>(Vector3(-2.5f, -5 + yOffset, -3), Vector3(1.0f, 1.0f, 1.0f));
-	e.addComponent<ParticleComponent>();
-	// Add mesh
-	e.addComponent<ModelComponent>("Resources/Models/nanosuit/nanosuit.obj");
-
-	auto springEntinty = world.createEntity();
-	springEntinty.addComponent<TransformComponent>(Vector3(-2.5f, 0 + yOffset, 3));
-	springEntinty.addComponent<FixedSpringComponent>(8, 2, e);
-
-	auto e2 = world.createEntity();
-	e2.addComponent<TransformComponent>(Vector3(2.5f, -5 + yOffset, -1), Vector3(1.0f, 1.0f, 1.0f));
-	e2.addComponent<ParticleComponent>();
-	// Add mesh
-	e2.addComponent<ModelComponent>("Resources/Models/nanosuit/nanosuit.obj");
-
-	auto springEntinty2 = world.createEntity();
-	springEntinty2.addComponent<TransformComponent>(Vector3(2.5f, 0 + yOffset, 1));
-	springEntinty2.addComponent<FixedSpringComponent>(5, 5, e2);
-
-	auto pairedSpring = world.createEntity();
-	pairedSpring.addComponent<PairedSpringComponent>(100, 5.0f, e, e2);
-
-	auto e3 = world.createEntity();
-	e3.addComponent<TransformComponent>(Vector3(-7.5f, -7.5f + yOffset, 1), Vector3(1.0f, 1.0f, 1.0f));
-	e3.addComponent<ParticleComponent>();
-	// Add mesh
-	e3.addComponent<ModelComponent>("Resources/Models/nanosuit/nanosuit.obj");
-
-	auto springEntinty3 = world.createEntity();
-	springEntinty3.addComponent<TransformComponent>(Vector3(-7.5f, -10 + yOffset, -1));
-	springEntinty3.addComponent<FixedSpringComponent>(7, 7, e3);
-
-	auto e4 = world.createEntity();
-	e4.addComponent<TransformComponent>(Vector3(7.5f, -7.5f + yOffset, 3), Vector3(1.0f, 1.0f, 1.0f));
-	e4.addComponent<ParticleComponent>();
-	// Add mesh
-	e4.addComponent<ModelComponent>("Resources/Models/nanosuit/nanosuit.obj");
-
-	auto springEntinty4 = world.createEntity();
-	springEntinty4.addComponent<TransformComponent>(Vector3(7.5f, -10 + yOffset, -3));
-	springEntinty4.addComponent<FixedSpringComponent>(5, 0, e4);
-
-	auto pairedSpring2 = world.createEntity();
-	pairedSpring2.addComponent<PairedSpringComponent>(100, 5.2f, e, e3);
-
-	auto pairedSpring3 = world.createEntity();
-	pairedSpring3.addComponent<PairedSpringComponent>(100, 5.2f, e2, e4);
-
-	auto pairedSpring4 = world.createEntity();
-	pairedSpring4.addComponent<PairedSpringComponent>(100, 10.0f, e3, e4);
-}
-
-void MakeABunchaSpheres(ECSWorld& world)
-{
-	for (int i = 0; i < 30; i++)
-	{
-		auto e = world.createEntity();
-		//e.addComponent<TransformComponent>(Vector3(RANDOM_FLOAT(-1, 1), 20,0));
-
-		e.addComponent<TransformComponent>(Vector3(RANDOM_FLOAT(-15.0f, 15.0f), RANDOM_FLOAT(6.0f, 34.0f), RANDOM_FLOAT(-15.0f, 15.0f)));
-		e.addComponent<ParticleComponent>(1, Vector3(RANDOM_FLOAT(-5, 5), RANDOM_FLOAT(-5, 5), RANDOM_FLOAT(-5, 5)));
-		e.addComponent<SphereComponent>(1);
-		Color col = Color(0, RANDOM_FLOAT(0.0f, 1.0f), RANDOM_FLOAT(0.0f, 1.0f));
-		//e.addComponent<DynamicPointLightComponent>(20.0f, col, col, col);
-	}
-
-	auto ref = world.createEntity();
-	ref.addComponent<TransformComponent>(Vector3(0, 20, 0), Vector3(0.3f, 0.3f, 0.3f), Vector3(0, 180, 0));
-	// Add mesh
-	ref.addComponent<ModelComponent>("Resources/Models/nanosuit/nanosuit.obj");
-	ref.addComponent<RotateComponent>(0, 40, 0);
-}
-
-void MakeACable(ECSWorld& world)
-{
-	auto e1 = world.createEntity();
-	e1.addComponent<TransformComponent>(Vector3(0, 40, 0));
-	//e1.addComponent<ParticleComponent>(1, Vector3(0,0,0), 0);
-
-	auto e2 = world.createEntity();
-	e2.addComponent<TransformComponent>(Vector3(0, 30, 0));
-	e2.addComponent<ParticleComponent>(1);
-	
-	auto e = world.createEntity();
-	e.addComponent<CableComponent>(e1, e2, 20);
-}
-
 void MakeCablesAndRods(ECSWorld& world)
 {
 	float width = 5.0f;
@@ -364,54 +269,7 @@ void MakeCablesAndRods(ECSWorld& world)
 		ePD = eD;
 	}
 
-	//auto eFixed = world.createEntity();
-	//eFixed.addComponent<TransformComponent>(Vector3(10, 40, 0));
-	////e1.addComponent<ParticleComponent>(1, Vector3(0,0,0), 0);
 
-	//auto eFixed2 = world.createEntity();
-	//eFixed2.addComponent<TransformComponent>(Vector3(20, 10, 0));
-
-	//auto eFixed3 = world.createEntity();
-	//eFixed3.addComponent<TransformComponent>(Vector3(-20, 10, 0));
-
-	//auto e1 = world.createEntity();
-	//e1.addComponent<TransformComponent>(Vector3(0, 30, 0));
-	//e1.addComponent<ParticleComponent>(10);
-
-	//auto e2 = world.createEntity();
-	//e2.addComponent<TransformComponent>(Vector3(-10, 20, 0));
-	//e2.addComponent<ParticleComponent>(10);
-
-	//auto e3 = world.createEntity();
-	//e3.addComponent<TransformComponent>(Vector3(0, 10, 0));
-	//e3.addComponent<ParticleComponent>(10);
-
-	//auto e4 = world.createEntity();
-	//e4.addComponent<TransformComponent>(Vector3(10, 20, 0));
-	//e4.addComponent<ParticleComponent>(10);
-
-	//auto eCable = world.createEntity();
-	//eCable.addComponent<CableComponent>(eFixed, e1, 20);
-
-	//auto eCable2 = world.createEntity();
-	//eCable2.addComponent<PairedSpringComponent>(1000, 20, eFixed2, e4);
-
-	//auto eCable3 = world.createEntity();
-	//eCable3.addComponent<PairedSpringComponent>(1000, 20, eFixed3, e2);
-
-	//auto eRod1 = world.createEntity();
-	//eRod1.addComponent<RodComponent>(e1, e2, 10 * sqrt(2));
-	//auto eRod2 = world.createEntity();
-	//eRod2.addComponent<RodComponent>(e2, e3, 10 * sqrt(2));
-	//auto eRod3 = world.createEntity();
-	//eRod3.addComponent<RodComponent>(e3, e4, 10 * sqrt(2));
-	//auto eRod4 = world.createEntity();
-	//eRod4.addComponent<RodComponent>(e4, e1, 10 * sqrt(2));
-
-	//auto eRodDiagonal1 = world.createEntity();
-	//eRodDiagonal1.addComponent<RodComponent>(e1, e3, 20);
-	//auto eRodDiagonal2 = world.createEntity();
-	//eRodDiagonal2.addComponent<RodComponent>(e2, e4, 20);
 }
 
 void SetupLights(ECSWorld& world)
