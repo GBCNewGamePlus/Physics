@@ -19,6 +19,7 @@
 #include <string>
 #include <stdlib.h>     
 #include <time.h>       
+#include <cmath>       
 
 #define DEBUG_LOG_LEVEL 3
 #define RANDOM_FLOAT(LO, HI) LO + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (HI - LO)))
@@ -47,10 +48,10 @@ int main()
 	auto e = world.createEntity();
 	e.addComponent<FPSControlComponent>();
 
-	auto wall = world.createEntity();
-	wall.addComponent<TransformComponent>(Vector3(0, -3.0f, 0.0f), Vector3(0.1f, 0.1f, 0.1f), Vector3(0, 270, 0));
-	wall.addComponent<ModelComponent>("Resources/Models/Sponza-master/sponza.obj");
-
+	//auto wall = world.createEntity();
+	//wall.addComponent<TransformComponent>(Vector3(0, -3.0f, 0.0f), Vector3(0.1f, 0.1f, 0.1f), Vector3(0, 270, 0));
+	//wall.addComponent<ModelComponent>("Resources/Models/Sponza-master/sponza.obj");
+	//MakeABunchaObjects(world);
 	SetupLights(world);
 	MakeCablesAndRods(world);
 
@@ -219,6 +220,7 @@ void MakeCablesAndRods(ECSWorld& world)
 	float width = 5.0f;
 	float depth = 5.0f;
 	float height = 20.0f;
+	float deltaHeight = 0.0f;
 
 	float initialX = -20.0f;
 	float initialZ = -20.0f;
@@ -236,34 +238,30 @@ void MakeCablesAndRods(ECSWorld& world)
 		eB.addComponent<TransformComponent>(Vector3(initialX + i * width, initialY, initialZ - depth));
 
 		auto eC = world.createEntity();
-		eC.addComponent<TransformComponent>(Vector3(initialX + i * width, initialY-height, initialZ));
+		eC.addComponent<TransformComponent>(Vector3(initialX + i * width, initialY-(height - std::abs(i - 2)*deltaHeight), initialZ));
 		eC.addComponent<ParticleComponent>(10);
 
 		auto eD = world.createEntity();
-		eD.addComponent<TransformComponent>(Vector3(initialX + i * width, initialY-height, initialZ - depth));
+		eD.addComponent<TransformComponent>(Vector3(initialX + i * width, initialY-(height - std::abs(i - 2)*deltaHeight), initialZ - depth));
 		eD.addComponent<ParticleComponent>(10);
 
 		auto eCableAC = world.createEntity();
-		eCableAC.addComponent<CableComponent>(eA, eC, height);
+		eCableAC.addComponent<CableComponent>(eA, eC, (height - std::abs(i - 2)*deltaHeight));
 
 		auto eCableBD = world.createEntity();
-		eCableBD.addComponent<CableComponent>(eB, eD, height);
+		eCableBD.addComponent<CableComponent>(eB, eD, (height - std::abs(i - 2)*deltaHeight));
 
 		auto eRodCD = world.createEntity();
 		eRodCD.addComponent<RodComponent>(eC, eD, depth);
 
 		if (i > 0) {
+			//float newWidth
 			auto eRodCPC = world.createEntity();
 			eRodCPC.addComponent<RodComponent>(eC, ePC, width);
 
 			auto eRodDPD = world.createEntity();
 			eRodDPD.addComponent<RodComponent>(eD, ePD, depth);
 
-			auto eRodCPD = world.createEntity();
-			eRodCPD.addComponent<RodComponent>(eC, ePD, depth * sqrt(2));
-
-			auto eRodDPC = world.createEntity();
-			eRodDPC.addComponent<RodComponent>(ePC, eD, depth * sqrt(2));
 		}
 		ePC = eC;
 		ePD = eD;

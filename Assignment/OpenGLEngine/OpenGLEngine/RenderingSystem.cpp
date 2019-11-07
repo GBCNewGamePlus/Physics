@@ -8,7 +8,7 @@ namespace Reality
 	RenderingSystem::RenderingSystem()
 	{
 		requireComponent<TransformComponent>();
-		requireComponent<ModelComponent>();
+		//requireComponent<ModelComponent>();
 	}
 
 	void RenderingSystem::Update(float deltaTime)
@@ -23,26 +23,32 @@ namespace Reality
 		{
 			drawModeChanged = false;
 		}
+		getWorld().data.renderUtil->SetFOV(45);
+		getWorld().data.renderUtil->UpdateViewMatrix();
+
 		for (auto e : getEntities()) 
 		{
 			const auto transform = e.getComponent<TransformComponent>();
-			auto &mesh = e.getComponent<ModelComponent>();
+			if (e.hasComponent<ModelComponent>()) {
+				auto &mesh = e.getComponent<ModelComponent>();
 
-			getWorld().data.renderUtil->SetFOV(45);
-			getWorld().data.renderUtil->UpdateViewMatrix();
-			if (getWorld().data.assetLoader->ModelsLoaded())
-			{
-				getWorld().data.assetLoader->SetLight(getWorld().data.renderUtil->camera.Position);
+				if (getWorld().data.assetLoader->ModelsLoaded())
+				{
+					getWorld().data.assetLoader->SetLight(getWorld().data.renderUtil->camera.Position);
+				}
+				if (mesh.modelId < 0)
+				{
+					mesh.modelId = getWorld().data.assetLoader->GetModelId(mesh.mesh);
+				}
+				if (mesh.modelId >= 0)
+				{
+					getWorld().data.renderUtil->DrawModel(mesh.modelId, transform.position, transform.scale, transform.eulerAngles, drawModes[drawMode]);
+				}
 			}
-			if (mesh.modelId < 0)
-			{
-				mesh.modelId = getWorld().data.assetLoader->GetModelId(mesh.mesh);
+			else if (e.hasComponent<SphereComponent>()) {
+				auto &sphere = e.getComponent<SphereComponent>();
+				getWorld().data.renderUtil->DrawSphere(transform.position, sphere.radius);
 			}
-			if(mesh.modelId >= 0)
-			{ 
-				getWorld().data.renderUtil->DrawModel(mesh.modelId, transform.position, transform.scale, transform.eulerAngles, drawModes[drawMode]);
-			}
-
 		}
 	}
 }

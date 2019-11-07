@@ -2,6 +2,7 @@
 #include "ECSConfig.h"
 #include "TransformComponent.h"
 #include "MeshComponent.h"
+#include "SphereComponent.h"
 
 class Shader;
 class Camera;
