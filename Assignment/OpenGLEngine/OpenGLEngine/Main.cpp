@@ -52,14 +52,9 @@ int main()
 
 	auto wall = world.createEntity();
 	wall.addComponent<TransformComponent>(Vector3(0, -3.0f, 0.0f), Vector3(0.1f, 0.1f, 0.1f), Vector3(0, 270, 0));
-	// Add mesh
 	wall.addComponent<ModelComponent>("Resources/Models/Sponza-master/sponza.obj");
 
 	SetupLights(world);
-	MakeABunchaObjects(world);
-	//MakeABunchaSpheres(world);
-	//MakeABunchaSprings(world);
-	//MakeACable(world);
 	MakeCablesAndRods(world);
 
 	// Create Systems
@@ -316,54 +311,107 @@ void MakeACable(ECSWorld& world)
 
 void MakeCablesAndRods(ECSWorld& world)
 {
-	auto eFixed = world.createEntity();
-	eFixed.addComponent<TransformComponent>(Vector3(10, 40, 0));
-	//e1.addComponent<ParticleComponent>(1, Vector3(0,0,0), 0);
+	float width = 5.0f;
+	float depth = 5.0f;
+	float height = 20.0f;
 
-	auto eFixed2 = world.createEntity();
-	eFixed2.addComponent<TransformComponent>(Vector3(20, 10, 0));
+	float initialX = -20.0f;
+	float initialZ = -20.0f;
+	float initialY = 20.0f;
 
-	auto eFixed3 = world.createEntity();
-	eFixed3.addComponent<TransformComponent>(Vector3(-20, 10, 0));
+	Mix::Entity ePC;
+	Mix::Entity ePD;
 
-	auto e1 = world.createEntity();
-	e1.addComponent<TransformComponent>(Vector3(0, 30, 0));
-	e1.addComponent<ParticleComponent>(10);
+	for(int i = 0; i < 5; i++)
+	{
+		auto eA = world.createEntity();
+		eA.addComponent<TransformComponent>(Vector3(initialX + i * width, initialY, initialZ));
 
-	auto e2 = world.createEntity();
-	e2.addComponent<TransformComponent>(Vector3(-10, 20, 0));
-	e2.addComponent<ParticleComponent>(10);
+		auto eB = world.createEntity();
+		eB.addComponent<TransformComponent>(Vector3(initialX + i * width, initialY, initialZ - depth));
 
-	auto e3 = world.createEntity();
-	e3.addComponent<TransformComponent>(Vector3(0, 10, 0));
-	e3.addComponent<ParticleComponent>(10);
+		auto eC = world.createEntity();
+		eC.addComponent<TransformComponent>(Vector3(initialX + i * width, initialY-height, initialZ));
+		eC.addComponent<ParticleComponent>(10);
 
-	auto e4 = world.createEntity();
-	e4.addComponent<TransformComponent>(Vector3(10, 20, 0));
-	e4.addComponent<ParticleComponent>(10);
+		auto eD = world.createEntity();
+		eD.addComponent<TransformComponent>(Vector3(initialX + i * width, initialY-height, initialZ - depth));
+		eD.addComponent<ParticleComponent>(10);
 
-	auto eCable = world.createEntity();
-	eCable.addComponent<CableComponent>(eFixed, e1, 20);
+		auto eCableAC = world.createEntity();
+		eCableAC.addComponent<CableComponent>(eA, eC, height);
 
-	auto eCable2 = world.createEntity();
-	eCable2.addComponent<PairedSpringComponent>(1000, 20, eFixed2, e4);
+		auto eCableBD = world.createEntity();
+		eCableBD.addComponent<CableComponent>(eB, eD, height);
 
-	auto eCable3 = world.createEntity();
-	eCable3.addComponent<PairedSpringComponent>(1000, 20, eFixed3, e2);
+		auto eRodCD = world.createEntity();
+		eRodCD.addComponent<RodComponent>(eC, eD, depth);
 
-	auto eRod1 = world.createEntity();
-	eRod1.addComponent<RodComponent>(e1, e2, 10 * sqrt(2));
-	auto eRod2 = world.createEntity();
-	eRod2.addComponent<RodComponent>(e2, e3, 10 * sqrt(2));
-	auto eRod3 = world.createEntity();
-	eRod3.addComponent<RodComponent>(e3, e4, 10 * sqrt(2));
-	auto eRod4 = world.createEntity();
-	eRod4.addComponent<RodComponent>(e4, e1, 10 * sqrt(2));
+		if (i > 0) {
+			auto eRodCPC = world.createEntity();
+			eRodCPC.addComponent<RodComponent>(eC, ePC, width);
 
-	auto eRodDiagonal1 = world.createEntity();
-	eRodDiagonal1.addComponent<RodComponent>(e1, e3, 20);
-	auto eRodDiagonal2 = world.createEntity();
-	eRodDiagonal2.addComponent<RodComponent>(e2, e4, 20);
+			auto eRodDPD = world.createEntity();
+			eRodDPD.addComponent<RodComponent>(eD, ePD, depth);
+
+			auto eRodCPD = world.createEntity();
+			eRodCPD.addComponent<RodComponent>(eC, ePD, depth * sqrt(2));
+
+			auto eRodDPC = world.createEntity();
+			eRodDPC.addComponent<RodComponent>(ePC, eD, depth * sqrt(2));
+		}
+		ePC = eC;
+		ePD = eD;
+	}
+
+	//auto eFixed = world.createEntity();
+	//eFixed.addComponent<TransformComponent>(Vector3(10, 40, 0));
+	////e1.addComponent<ParticleComponent>(1, Vector3(0,0,0), 0);
+
+	//auto eFixed2 = world.createEntity();
+	//eFixed2.addComponent<TransformComponent>(Vector3(20, 10, 0));
+
+	//auto eFixed3 = world.createEntity();
+	//eFixed3.addComponent<TransformComponent>(Vector3(-20, 10, 0));
+
+	//auto e1 = world.createEntity();
+	//e1.addComponent<TransformComponent>(Vector3(0, 30, 0));
+	//e1.addComponent<ParticleComponent>(10);
+
+	//auto e2 = world.createEntity();
+	//e2.addComponent<TransformComponent>(Vector3(-10, 20, 0));
+	//e2.addComponent<ParticleComponent>(10);
+
+	//auto e3 = world.createEntity();
+	//e3.addComponent<TransformComponent>(Vector3(0, 10, 0));
+	//e3.addComponent<ParticleComponent>(10);
+
+	//auto e4 = world.createEntity();
+	//e4.addComponent<TransformComponent>(Vector3(10, 20, 0));
+	//e4.addComponent<ParticleComponent>(10);
+
+	//auto eCable = world.createEntity();
+	//eCable.addComponent<CableComponent>(eFixed, e1, 20);
+
+	//auto eCable2 = world.createEntity();
+	//eCable2.addComponent<PairedSpringComponent>(1000, 20, eFixed2, e4);
+
+	//auto eCable3 = world.createEntity();
+	//eCable3.addComponent<PairedSpringComponent>(1000, 20, eFixed3, e2);
+
+	//auto eRod1 = world.createEntity();
+	//eRod1.addComponent<RodComponent>(e1, e2, 10 * sqrt(2));
+	//auto eRod2 = world.createEntity();
+	//eRod2.addComponent<RodComponent>(e2, e3, 10 * sqrt(2));
+	//auto eRod3 = world.createEntity();
+	//eRod3.addComponent<RodComponent>(e3, e4, 10 * sqrt(2));
+	//auto eRod4 = world.createEntity();
+	//eRod4.addComponent<RodComponent>(e4, e1, 10 * sqrt(2));
+
+	//auto eRodDiagonal1 = world.createEntity();
+	//eRodDiagonal1.addComponent<RodComponent>(e1, e3, 20);
+	//auto eRodDiagonal2 = world.createEntity();
+	//eRodDiagonal2.addComponent<RodComponent>(e2, e4, 20);
 }
 
 void SetupLights(ECSWorld& world)

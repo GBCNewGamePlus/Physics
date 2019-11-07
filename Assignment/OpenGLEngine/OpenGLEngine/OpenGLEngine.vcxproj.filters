@@ -43,6 +43,12 @@
     <Filter Include="Input">
       <UniqueIdentifier>{09a9940b-c17f-43c0-becf-d8da8efa3d30}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Physics\Springs">
+      <UniqueIdentifier>{b96e81ac-0f25-4dc4-b9d3-516445e95a81}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Physics\CableRods">
+      <UniqueIdentifier>{900fd0cf-cabf-4f22-b026-f844d7643a40}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="glad.c">
@@ -90,12 +96,6 @@
     <ClCompile Include="ForceAccumulatorSystem.cpp">
       <Filter>Physics\Particles</Filter>
     </ClCompile>
-    <ClCompile Include="FixedSpringForceGeneratorSystem.cpp">
-      <Filter>Physics</Filter>
-    </ClCompile>
-    <ClCompile Include="PairedSpringForceGeneratorSystem.cpp">
-      <Filter>Physics</Filter>
-    </ClCompile>
     <ClCompile Include="ParticleContactResolutionSystem.cpp">
       <Filter>Physics</Filter>
     </ClCompile>
@@ -135,17 +135,23 @@
     <ClCompile Include="SphereContactGeneratorSystem.cpp">
       <Filter>TestCS</Filter>
     </ClCompile>
-    <ClCompile Include="CableComponentSystem.cpp">
-      <Filter>TestCS</Filter>
-    </ClCompile>
-    <ClCompile Include="RodSystem.cpp">
-      <Filter>TestCS</Filter>
-    </ClCompile>
     <ClCompile Include="RigidBodySystem.cpp">
       <Filter>Physics</Filter>
     </ClCompile>
     <ClCompile Include="Color.cpp">
       <Filter>Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="FixedSpringForceGeneratorSystem.cpp">
+      <Filter>Physics\Springs</Filter>
+    </ClCompile>
+    <ClCompile Include="PairedSpringForceGeneratorSystem.cpp">
+      <Filter>Physics\Springs</Filter>
+    </ClCompile>
+    <ClCompile Include="CableComponentSystem.cpp">
+      <Filter>Physics\CableRods</Filter>
+    </ClCompile>
+    <ClCompile Include="RodSystem.cpp">
+      <Filter>Physics\CableRods</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -239,18 +245,6 @@
     <ClInclude Include="ForceAccumulatorSystem.h">
       <Filter>Physics\Particles</Filter>
     </ClInclude>
-    <ClInclude Include="FixedSpringComponent.h">
-      <Filter>Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="FixedSpringForceGeneratorSystem.h">
-      <Filter>Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="PairedSpringComponent.h">
-      <Filter>Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="PairedSpringForceGeneratorSystem.h">
-      <Filter>Physics</Filter>
-    </ClInclude>
     <ClInclude Include="ParticleContactComponent.h">
       <Filter>Physics</Filter>
     </ClInclude>
@@ -302,23 +296,35 @@
     <ClInclude Include="SphereContactGeneratorSystem.h">
       <Filter>TestCS</Filter>
     </ClInclude>
-    <ClInclude Include="CableComponent.h">
-      <Filter>TestCS</Filter>
-    </ClInclude>
-    <ClInclude Include="CableComponentSystem.h">
-      <Filter>TestCS</Filter>
-    </ClInclude>
-    <ClInclude Include="RodComponent.h">
-      <Filter>TestCS</Filter>
-    </ClInclude>
-    <ClInclude Include="RodSystem.h">
-      <Filter>TestCS</Filter>
-    </ClInclude>
     <ClInclude Include="RigidBodyComponent.h">
       <Filter>Physics</Filter>
     </ClInclude>
     <ClInclude Include="RigidBodySystem.h">
       <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedSpringComponent.h">
+      <Filter>Physics\Springs</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedSpringForceGeneratorSystem.h">
+      <Filter>Physics\Springs</Filter>
+    </ClInclude>
+    <ClInclude Include="PairedSpringComponent.h">
+      <Filter>Physics\Springs</Filter>
+    </ClInclude>
+    <ClInclude Include="PairedSpringForceGeneratorSystem.h">
+      <Filter>Physics\Springs</Filter>
+    </ClInclude>
+    <ClInclude Include="CableComponent.h">
+      <Filter>Physics\CableRods</Filter>
+    </ClInclude>
+    <ClInclude Include="CableComponentSystem.h">
+      <Filter>Physics\CableRods</Filter>
+    </ClInclude>
+    <ClInclude Include="RodComponent.h">
+      <Filter>Physics\CableRods</Filter>
+    </ClInclude>
+    <ClInclude Include="RodSystem.h">
+      <Filter>Physics\CableRods</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
