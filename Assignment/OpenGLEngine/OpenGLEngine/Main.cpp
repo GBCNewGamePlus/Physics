@@ -220,7 +220,7 @@ void MakeCablesAndRods(ECSWorld& world)
 	float width = 5.0f;
 	float depth = 5.0f;
 	float height = 20.0f;
-	float deltaHeight = 0.0f;
+	float deltaHeight = 3.0f;
 
 	float initialX = -20.0f;
 	float initialZ = -20.0f;
@@ -228,9 +228,12 @@ void MakeCablesAndRods(ECSWorld& world)
 
 	Mix::Entity ePC;
 	Mix::Entity ePD;
+	float previousDeltaHeight = 0.0f;
 
 	for(int i = 0; i < 5; i++)
-	{
+	{	float currentDeltaHeight = std::abs(i - 2)*deltaHeight;
+		float cordLength = height - currentDeltaHeight;
+
 		auto eA = world.createEntity();
 		eA.addComponent<TransformComponent>(Vector3(initialX + i * width, initialY, initialZ));
 
@@ -238,33 +241,34 @@ void MakeCablesAndRods(ECSWorld& world)
 		eB.addComponent<TransformComponent>(Vector3(initialX + i * width, initialY, initialZ - depth));
 
 		auto eC = world.createEntity();
-		eC.addComponent<TransformComponent>(Vector3(initialX + i * width, initialY-(height - std::abs(i - 2)*deltaHeight), initialZ));
+		eC.addComponent<TransformComponent>(Vector3(initialX + i * width, initialY - cordLength, initialZ));
 		eC.addComponent<ParticleComponent>(10);
 
 		auto eD = world.createEntity();
-		eD.addComponent<TransformComponent>(Vector3(initialX + i * width, initialY-(height - std::abs(i - 2)*deltaHeight), initialZ - depth));
+		eD.addComponent<TransformComponent>(Vector3(initialX + i * width, initialY - cordLength, initialZ - depth));
 		eD.addComponent<ParticleComponent>(10);
 
 		auto eCableAC = world.createEntity();
-		eCableAC.addComponent<CableComponent>(eA, eC, (height - std::abs(i - 2)*deltaHeight));
+		eCableAC.addComponent<CableComponent>(eA, eC, cordLength);
 
 		auto eCableBD = world.createEntity();
-		eCableBD.addComponent<CableComponent>(eB, eD, (height - std::abs(i - 2)*deltaHeight));
+		eCableBD.addComponent<CableComponent>(eB, eD, cordLength);
 
 		auto eRodCD = world.createEntity();
 		eRodCD.addComponent<RodComponent>(eC, eD, depth);
 
 		if (i > 0) {
-			//float newWidth
+			float heightDifference = previousDeltaHeight - currentDeltaHeight;
+			float newWidth = std::sqrt(heightDifference*heightDifference + width * width);
 			auto eRodCPC = world.createEntity();
-			eRodCPC.addComponent<RodComponent>(eC, ePC, width);
+			eRodCPC.addComponent<RodComponent>(eC, ePC, newWidth);
 
 			auto eRodDPD = world.createEntity();
-			eRodDPD.addComponent<RodComponent>(eD, ePD, depth);
-
+			eRodDPD.addComponent<RodComponent>(eD, ePD, newWidth);
 		}
 		ePC = eC;
 		ePD = eD;
+		previousDeltaHeight = currentDeltaHeight;
 	}
 
 
