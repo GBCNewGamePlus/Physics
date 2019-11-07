@@ -1,13 +1,14 @@
 #include "RenderingSystem.h"
 #include "Shader.h"
 #include "Camera.h"
+#include "TriangleComponent.h"
 #include <glm/gtx/euler_angles.hpp> 
 
 namespace Reality
 {
 	RenderingSystem::RenderingSystem()
 	{
-		requireComponent<TransformComponent>();
+		//requireComponent<TransformComponent>();
 		//requireComponent<ModelComponent>();
 	}
 
@@ -28,26 +29,37 @@ namespace Reality
 
 		for (auto e : getEntities()) 
 		{
-			const auto transform = e.getComponent<TransformComponent>();
-			if (e.hasComponent<ModelComponent>()) {
-				auto &mesh = e.getComponent<ModelComponent>();
+			if (e.hasComponent<TransformComponent>())
+			{
+				const auto transform = e.getComponent<TransformComponent>();
+				if (e.hasComponent<ModelComponent>()) {
+					auto &mesh = e.getComponent<ModelComponent>();
 
-				if (getWorld().data.assetLoader->ModelsLoaded())
-				{
-					getWorld().data.assetLoader->SetLight(getWorld().data.renderUtil->camera.Position);
+					if (getWorld().data.assetLoader->ModelsLoaded())
+					{
+						getWorld().data.assetLoader->SetLight(getWorld().data.renderUtil->camera.Position);
+					}
+					if (mesh.modelId < 0)
+					{
+						mesh.modelId = getWorld().data.assetLoader->GetModelId(mesh.mesh);
+					}
+					if (mesh.modelId >= 0)
+					{
+						getWorld().data.renderUtil->DrawModel(mesh.modelId, transform.position, transform.scale, transform.eulerAngles, drawModes[drawMode]);
+					}
 				}
-				if (mesh.modelId < 0)
-				{
-					mesh.modelId = getWorld().data.assetLoader->GetModelId(mesh.mesh);
-				}
-				if (mesh.modelId >= 0)
-				{
-					getWorld().data.renderUtil->DrawModel(mesh.modelId, transform.position, transform.scale, transform.eulerAngles, drawModes[drawMode]);
+				else if (e.hasComponent<SphereComponent>()) {
+					auto &sphere = e.getComponent<SphereComponent>();
+					getWorld().data.renderUtil->DrawSphere(transform.position, sphere.radius);
 				}
 			}
-			else if (e.hasComponent<SphereComponent>()) {
-				auto &sphere = e.getComponent<SphereComponent>();
-				getWorld().data.renderUtil->DrawSphere(transform.position, sphere.radius);
+			else if (e.hasComponent<TriangleComponent>())
+			{
+				auto triangle = e.getComponent<TriangleComponent>();
+				auto a = triangle.entityA.getComponent<TransformComponent>().position;
+				auto b = triangle.entityB.getComponent<TransformComponent>().position;
+				auto c = triangle.entityC.getComponent<TransformComponent>().position;
+				getWorld().data.renderUtil->DrawTriangle(a,b,c,Color::Yellow);
 			}
 		}
 	}

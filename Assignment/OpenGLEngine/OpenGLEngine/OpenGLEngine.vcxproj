@@ -122,6 +122,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AssetLoader.cpp" />
+    <ClCompile Include="BungeeSpawnSystem.cpp" />
     <ClCompile Include="CableComponentSystem.cpp" />
     <ClCompile Include="Color.cpp" />
     <ClCompile Include="DynamicDirectionalLightSystem.cpp">
@@ -168,11 +169,13 @@
     <ClCompile Include="RotateSystem.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="SphereContactGeneratorSystem.cpp" />
+    <ClCompile Include="SphereSpawnSystem.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AssetLoader.h" />
+    <ClInclude Include="BungeeSpawnSystem.h" />
     <ClInclude Include="CableComponent.h" />
     <ClInclude Include="CableComponentSystem.h" />
     <ClInclude Include="Camera.h" />
@@ -251,9 +254,11 @@
     <ClInclude Include="Shadinclude.hpp" />
     <ClInclude Include="SphereComponent.h" />
     <ClInclude Include="SphereContactGeneratorSystem.h" />
+    <ClInclude Include="SphereSpawnSystem.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TransformComponent.h" />
+    <ClInclude Include="TriangleComponent.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="WorldData.h" />
   </ItemGroup>

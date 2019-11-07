@@ -16,6 +16,8 @@
 #include "DynamicDirectionalLightSystem.h"
 #include "DynamicPointLightSystem.h"
 #include "DynamicSpotLightSystem.h"
+#include "SphereSpawnSystem.h"
+#include "TriangleComponent.h"
 #include <string>
 #include <stdlib.h>     
 #include <time.h>       
@@ -29,7 +31,7 @@ using namespace Reality;
 void LoadShaders(ECSWorld& world);
 void LoadModels(ECSWorld& world);
 void MakeABunchaObjects(ECSWorld& world);
-void MakeCablesAndRods(ECSWorld& world);
+void BuildBridge(ECSWorld& world);
 void SetupLights(ECSWorld& world);
 
 int main()
@@ -53,7 +55,7 @@ int main()
 	//wall.addComponent<ModelComponent>("Resources/Models/Sponza-master/sponza.obj");
 	//MakeABunchaObjects(world);
 	SetupLights(world);
-	MakeCablesAndRods(world);
+	BuildBridge(world);
 
 	// Create Systems
 	world.getSystemManager().addSystem<RenderingSystem>();
@@ -73,6 +75,7 @@ int main()
 	world.getSystemManager().addSystem<DynamicDirectionalLightSystem>();
 	world.getSystemManager().addSystem<DynamicPointLightSystem>();
 	world.getSystemManager().addSystem<DynamicSpotLightSystem>();
+	world.getSystemManager().addSystem<SphereSpawnSystem>();
 
 	float time = glfwGetTime();
 	float stepTime = glfwGetTime();
@@ -116,6 +119,7 @@ int main()
 		world.getSystemManager().getSystem<FPSControlSystem>().Update(deltaTime);
 		world.getSystemManager().getSystem<RotateSystem>().Update(deltaTime);
 		world.getSystemManager().getSystem<ParticleSpawnerSystem>().Update(deltaTime);
+		world.getSystemManager().getSystem<SphereSpawnSystem>().Update(deltaTime);
 
 		// Physics
 		//float fixedDeltaTime = glfwGetKey(world.data.renderUtil->window->glfwWindow, GLFW_KEY_SPACE) == GLFW_PRESS ? 1 / 60.0f : 0;		
@@ -193,6 +197,7 @@ void LoadShaders(ECSWorld& world)
 {
 	world.data.assetLoader->StartShaderLoading({ {"Shaders/Lighting_Maps.vs", "Shaders/Lighting_Maps.fs"} });
 }
+
 void LoadModels(ECSWorld& world)
 {
 	world.data.assetLoader->StartModelLoading({
@@ -215,7 +220,8 @@ void MakeABunchaObjects(ECSWorld& world)
 	e.addComponent<ModelComponent>("Resources/Models/nanosuit/nanosuit.obj");
 	e.addComponent<RotateComponent>(0, 40, 0);
 }
-void MakeCablesAndRods(ECSWorld& world)
+
+void BuildBridge(ECSWorld& world)
 {
 	float width = 5.0f;
 	float depth = 5.0f;
@@ -265,6 +271,12 @@ void MakeCablesAndRods(ECSWorld& world)
 
 			auto eRodDPD = world.createEntity();
 			eRodDPD.addComponent<RodComponent>(eD, ePD, newWidth);
+
+			auto eTriangle1 = world.createEntity();
+			eTriangle1.addComponent<TriangleComponent>(ePC, ePD, eC);
+
+			auto eTriangle2 = world.createEntity();
+			eTriangle2.addComponent<TriangleComponent>(ePD, eD, eC);
 		}
 		ePC = eC;
 		ePD = eD;

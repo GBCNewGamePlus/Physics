@@ -153,6 +153,12 @@
     <ClCompile Include="RodSystem.cpp">
       <Filter>Physics\CableRods</Filter>
     </ClCompile>
+    <ClCompile Include="BungeeSpawnSystem.cpp">
+      <Filter>Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="SphereSpawnSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stb_image.h">
@@ -325,6 +331,15 @@
     </ClInclude>
     <ClInclude Include="RodSystem.h">
       <Filter>Physics\CableRods</Filter>
+    </ClInclude>
+    <ClInclude Include="BungeeSpawnSystem.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="SphereSpawnSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TriangleComponent.h">
+      <Filter>Physics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
