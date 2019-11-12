@@ -2,6 +2,7 @@
 #include "ECSConfig.h"
 #include "SphereComponent.h"
 #include "ParticleComponent.h"
+#include "TriangleComponent.h"
 #include "TransformComponent.h"
 
 namespace Reality
