@@ -1,6 +1,7 @@
 #include "SphereContactGeneratorSystem.h"
 #include "ParticleContactComponent.h"
 #include "..\Include\assimp\vector3.h"
+#include "TriangleMath.h"
 
 
 namespace Reality
@@ -37,29 +38,39 @@ namespace Reality
 						{
 							if (entities[j].hasComponent<TriangleComponent>()) {
 
-
 								auto& transform2 = entities[j].getComponent<TransformComponent>();
 								auto& triangle2 = entities[j].getComponent<TriangleComponent>();
 								auto& particle2 = entities[j].getComponent<ParticleComponent>();
-								
-								if (glm::length(transform1.position - transform2.position)
-									< sphere1.radius + triangle2.radius)
-								{
-									float penetration = sphere1.radius + triangle2.radius -
-										glm::length(transform1.position - transform2.position);
-									ECSEntity e = getWorld().createEntity();
-									Vector3 normal = glm::normalize(transform1.position - transform2.position);
+								float sphereDistance = (TriangleMath::DOT(triangle2.normalPlane, transform1.position)) - triangle2.direction;
+								Vector3 pointOnPlane = transform2.position - (sphereDistance*triangle2.normalPlane);
+								float areaABC = TriangleMath::DOT(triangle2.normalPlane, TriangleMath::CROSS((triangle2.tempb - triangle2.tempa), (triangle2.tempc - triangle2.tempa)));
+								float areaPBC = TriangleMath::DOT(triangle2.normalPlane, TriangleMath::CROSS((triangle2.tempb - pointOnPlane), (triangle2.tempc - pointOnPlane)));
+								float areaPCA = TriangleMath::DOT(triangle2.normalPlane, TriangleMath::CROSS((triangle2.tempc - pointOnPlane), (triangle2.tempa - pointOnPlane)));
+								Vector3 barycentricCoords;
+								barycentricCoords.x = areaPBC / areaABC; // alpha
+								barycentricCoords.y = areaPCA / areaABC; // beta
+								barycentricCoords.z = 1.0f - barycentricCoords.x - barycentricCoords.y; // gamma
+								if (TriangleMath::BARY(barycentricCoords)) {
+									if (glm::length(transform1.position - pointOnPlane)
+										< sphere1.radius)
+									{
+										float penetration = sphere1.radius -
+											glm::length(transform1.position - transform2.position);
+										ECSEntity e = getWorld().createEntity();
+										Vector3 normal = glm::normalize(transform1.position - transform2.position);
 
-									getWorld().data.renderUtil->DrawLine(transform1.position - sphere1.radius * normal,
-										transform1.position - sphere1.radius * normal + penetration * normal, Color(0, 0, 1));
+										getWorld().data.renderUtil->DrawLine(transform1.position - sphere1.radius * normal,
+											transform1.position - sphere1.radius * normal + penetration * normal, Color(0, 0, 1));
 
-									e.addComponent<ParticleContactComponent>(entities[i],
-										entities[j],
-										1.0f,
-										normal,
-										penetration);
-									collided = true;
+										e.addComponent<ParticleContactComponent>(entities[i],
+											entities[j],
+											1.0f,
+											normal,
+											penetration);
+										collided = true;
+									}
 								}
+								
 							}
 						}
 					}

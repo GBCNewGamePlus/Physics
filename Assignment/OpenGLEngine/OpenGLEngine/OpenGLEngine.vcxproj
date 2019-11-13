@@ -260,6 +260,7 @@
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TransformComponent.h" />
     <ClInclude Include="TriangleComponent.h" />
+    <ClInclude Include="TriangleMath.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="WorldData.h" />
   </ItemGroup>

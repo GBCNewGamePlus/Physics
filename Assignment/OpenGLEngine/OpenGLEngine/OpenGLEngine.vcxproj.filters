@@ -341,6 +341,12 @@
     <ClInclude Include="TriangleComponent.h">
       <Filter>Physics</Filter>
     </ClInclude>
+    <ClInclude Include="..\Include\glad\glad.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TriangleMath.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\Lighting_Maps.vs">

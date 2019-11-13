@@ -1,5 +1,7 @@
 #pragma once
 #include "ECSConfig.h"
+#include "TriangleMath.h"
+#include "TransformComponent.h"
 
 namespace Reality
 {
@@ -9,22 +11,27 @@ namespace Reality
 		Vector3 AB, BC, CA;
 		Vector3 normalAB, normalBC, normalCA;
 		Vector3 normalPlane;
+		float direction;
+		Vector3 tempa;
+		Vector3 tempb;
+		Vector3 tempc;
 
 		TriangleComponent(ECSEntity a = ECSEntity(), ECSEntity b = ECSEntity(), ECSEntity c = ECSEntity())
 		{
 			entityA = a;
 			entityB = b;
 			entityC = c;
-			auto& tempa = a.getComponent<TransformComponent>();
-			auto& tempb = b.getComponent<TransformComponent>();
-			auto& tempc = c.getComponent<TransformComponent>();
-			AB = tempa.position - tempb.position;
-			BC = tempb.position - tempc.position;
-			CA = tempc.position - tempa.position;
-			normalAB = AB / AB.length;
-			normalBC = BC / BC.length;
-			normalCA = CA / CA.length;
-			normalPlane = Vector3((normalAB.y*normalBC.z) - (normalAB.z*normalBC.y), (normalAB.z*normalBC.x) - (normalAB.x*normalBC.z), (normalAB.x*normalBC.y) - (normalAB.y*normalBC.x));
+			tempa = a.getComponent<TransformComponent>().position;
+			tempb = b.getComponent<TransformComponent>().position;
+			tempc = c.getComponent<TransformComponent>().position;
+			AB = tempa - tempb;
+			BC = tempb - tempc;
+			CA = tempc - tempa;
+			normalAB = TriangleMath::SDIVISION(AB);
+			normalBC = TriangleMath::SDIVISION(BC);
+			normalCA = TriangleMath::SDIVISION(CA);
+			normalPlane = TriangleMath::CROSS(normalAB,normalBC);
+			direction = TriangleMath::DOT(normalPlane, tempa);
 		}
 	};
 }
