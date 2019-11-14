@@ -40,8 +40,5 @@ namespace Reality
 				}*/
 			}
 		}
-		if (collision) {
-
-		}
 	}
 }

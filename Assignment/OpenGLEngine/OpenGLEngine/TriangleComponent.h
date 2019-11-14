@@ -10,6 +10,7 @@ namespace Reality
 		ECSEntity entityA, entityB, entityC;
 		Vector3 normal;
 
+
 		TriangleComponent(ECSEntity a = ECSEntity(), ECSEntity b = ECSEntity(), ECSEntity c = ECSEntity())
 		{
 			entityA = a;

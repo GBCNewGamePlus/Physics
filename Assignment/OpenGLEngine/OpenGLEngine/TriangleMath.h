@@ -13,9 +13,10 @@ namespace Reality {
 			return temp;
 		}
 		static bool BARY(Vector3 a) {
-			if (a.x <= 1 && a.x >= 0) {
-				if (a.y <= 1 && a.y >= 0) {
-					if (a.z <= 1 && a.z >= 0) {
+			float checkmod = 0.5f;
+			if (a.x <= 1 + checkmod && a.x >= 0 - checkmod) {
+				if (a.y <= 1 + checkmod && a.y >= 0 - checkmod) {
+					if (a.z <= 1 + checkmod && a.z >= 0 - checkmod) {
 						return true;
 					}
 				}
