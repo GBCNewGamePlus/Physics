@@ -23,11 +23,7 @@ namespace Reality {
 			return false;
 		}
 		static Vector3 SDIVISION(Vector3 a) {
-			Vector3 temp;
-			temp.x = a.x / a.length();
-			temp.y = a.y / a.length();
-			temp.z = a.z / a.length();
-			return temp;
+			return a/ glm::length(a);
 		}
 	};
 }

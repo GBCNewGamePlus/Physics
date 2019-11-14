@@ -18,6 +18,7 @@
 #include "DynamicSpotLightSystem.h"
 #include "SphereSpawnSystem.h"
 #include "TriangleComponent.h"
+#include "TriangleContactResolutionSystem.h"
 #include <string>
 #include <stdlib.h>     
 #include <time.h>       
@@ -76,6 +77,7 @@ int main()
 	world.getSystemManager().addSystem<DynamicPointLightSystem>();
 	world.getSystemManager().addSystem<DynamicSpotLightSystem>();
 	world.getSystemManager().addSystem<SphereSpawnSystem>();
+	world.getSystemManager().addSystem<TriangleContactResolutionSystem>();
 
 	float time = glfwGetTime();
 	float stepTime = glfwGetTime();
@@ -137,6 +139,7 @@ int main()
 		world.getSystemManager().getSystem<CableComponentSystem>().Update(fixedDeltaTime);
 		world.getSystemManager().getSystem<RodSystem>().Update(fixedDeltaTime);
 		world.getSystemManager().getSystem<ParticleContactResolutionSystem>().Update(fixedDeltaTime);
+		world.getSystemManager().getSystem<TriangleContactResolutionSystem>().Update(fixedDeltaTime);
 
 		// Rendering Update
 		world.getSystemManager().getSystem<DynamicDirectionalLightSystem>().Update(deltaTime);

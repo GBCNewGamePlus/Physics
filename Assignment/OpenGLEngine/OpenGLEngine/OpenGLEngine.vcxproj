@@ -171,6 +171,10 @@
     <ClCompile Include="SphereContactGeneratorSystem.cpp" />
     <ClCompile Include="SphereSpawnSystem.cpp" />
     <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="TriangleContactResolutionSystem.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -260,6 +264,14 @@
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TransformComponent.h" />
     <ClInclude Include="TriangleComponent.h" />
+    <ClInclude Include="TriangleContactComponent.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="TriangleContactResolutionSystem.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="TriangleMath.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="WorldData.h" />

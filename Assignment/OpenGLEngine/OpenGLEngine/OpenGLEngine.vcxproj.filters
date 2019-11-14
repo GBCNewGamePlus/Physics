@@ -159,6 +159,9 @@
     <ClCompile Include="SphereContactGeneratorSystem.cpp">
       <Filter>Physics</Filter>
     </ClCompile>
+    <ClCompile Include="TriangleContactResolutionSystem.cpp">
+      <Filter>Physics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stb_image.h">
@@ -345,6 +348,12 @@
       <Filter>Physics</Filter>
     </ClInclude>
     <ClInclude Include="SphereComponent.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="TriangleContactComponent.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="TriangleContactResolutionSystem.h">
       <Filter>Physics</Filter>
     </ClInclude>
   </ItemGroup>
