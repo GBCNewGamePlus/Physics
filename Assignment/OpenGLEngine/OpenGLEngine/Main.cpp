@@ -277,12 +277,14 @@ void BuildBridge(ECSWorld& world)
 			auto& tempb = ePD.getComponent<TransformComponent>().position;
 			auto& tempc = eC.getComponent<TransformComponent>().position;
 			eTriangle1.addComponent<TriangleComponent>(ePC, ePD, eC, tempa, tempb, tempc);
+			//eTriangle1.addComponent<ParticleComponent>();
 
 			auto eTriangle2 = world.createEntity();
 			auto& tempa2 = ePD.getComponent<TransformComponent>().position;
 			auto& tempb2 = eD.getComponent<TransformComponent>().position;
 			auto& tempc2 = eC.getComponent<TransformComponent>().position;
 			eTriangle2.addComponent<TriangleComponent>(ePD, eD, eC, tempa2, tempb2, tempc2);
+			//eTriangle2.addComponent<ParticleComponent>();
 		}
 		ePC = eC;
 		ePD = eD;

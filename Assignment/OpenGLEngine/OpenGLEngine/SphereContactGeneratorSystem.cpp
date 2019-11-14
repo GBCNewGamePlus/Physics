@@ -45,10 +45,10 @@ namespace Reality
 								Vector3 pointOnPlane = transform1.position - (sphereDistance*triangle2.normalPlane);
 								float areaABC = TriangleMath::DOT(triangle2.normalPlane, TriangleMath::CROSS((triangle2.tempb - triangle2.tempa), (triangle2.tempc - triangle2.tempa)));
 								float areaPBC = TriangleMath::DOT(triangle2.normalPlane, TriangleMath::CROSS((triangle2.tempb - pointOnPlane), (triangle2.tempc - pointOnPlane)));
-								float areaPCA = TriangleMath::DOT(triangle2.normalPlane, TriangleMath::CROSS((triangle2.tempc - pointOnPlane), (triangle2.tempa - pointOnPlane)));
+								float areaPBA = TriangleMath::DOT(triangle2.normalPlane, TriangleMath::CROSS((triangle2.tempb - pointOnPlane), (triangle2.tempa - pointOnPlane)));
 								Vector3 barycentricCoords;
 								barycentricCoords.x = areaPBC / areaABC; // alpha
-								barycentricCoords.y = areaPCA / areaABC; // beta
+								barycentricCoords.y = areaPBA / areaABC; // beta
 								barycentricCoords.z = 1.0f - barycentricCoords.x - barycentricCoords.y; // gamma
 								if (TriangleMath::BARY(barycentricCoords)) {
 									if (glm::length(transform1.position - pointOnPlane)

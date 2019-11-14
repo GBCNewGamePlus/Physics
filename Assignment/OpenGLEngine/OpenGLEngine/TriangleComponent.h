@@ -8,8 +8,8 @@ namespace Reality
 	struct TriangleComponent
 	{
 		ECSEntity entityA, entityB, entityC;
-		Vector3 AB, BC, CA;
-		Vector3 normalAB, normalBC, normalCA;
+		Vector3 AB, BC, CA, BA;
+		Vector3 normalAB, normalBC, normalCA, normalBA;
 		Vector3 normalPlane;
 		float direction;
 		Vector3 tempa;
@@ -25,12 +25,14 @@ namespace Reality
 			tempb = _b;
 			tempc = _c;
 			AB = tempa - tempb;
+			BA = tempb - tempa;
 			BC = tempb - tempc;
 			CA = tempc - tempa;
 			normalAB = TriangleMath::SDIVISION(AB);
+			normalBA = TriangleMath::SDIVISION(BA);
 			normalBC = TriangleMath::SDIVISION(BC);
 			normalCA = TriangleMath::SDIVISION(CA);
-			normalPlane = TriangleMath::CROSS(normalAB,normalBC);
+			normalPlane = TriangleMath::CROSS(normalBA,normalBC);
 			direction = TriangleMath::DOT(normalPlane, tempa);
 		}
 	};
