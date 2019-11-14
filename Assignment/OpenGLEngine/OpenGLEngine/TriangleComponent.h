@@ -8,30 +8,26 @@ namespace Reality
 	struct TriangleComponent
 	{
 		ECSEntity entityA, entityB, entityC;
-		Vector3 AB, BC, CA;
 		Vector3 normalAB, normalBC, normalCA;
 		Vector3 normalPlane;
 		float direction;
-		Vector3 tempa;
-		Vector3 tempb;
-		Vector3 tempc;
 
-		TriangleComponent(ECSEntity a = ECSEntity(), ECSEntity b = ECSEntity(), ECSEntity c = ECSEntity(), Vector3 _a = Vector3(0,0,0), Vector3 _b = Vector3(0, 0, 0), Vector3 _c = Vector3(0, 0, 0))
+		TriangleComponent(ECSEntity a = ECSEntity(), ECSEntity b = ECSEntity(), ECSEntity c = ECSEntity())
 		{
 			entityA = a;
 			entityB = b;
 			entityC = c;
-			tempa = _a;
-			tempb = _b;
-			tempc = _c;
-			AB = tempa - tempb;
-			BC = tempb - tempc;
-			CA = tempc - tempa;
-			normalAB = TriangleMath::SDIVISION(AB);
-			normalBC = TriangleMath::SDIVISION(BC);
-			normalCA = TriangleMath::SDIVISION(CA);
-			normalPlane = TriangleMath::CROSS(normalAB,normalBC);
-			direction = TriangleMath::DOT(normalPlane, tempa);
+			// Get the three points
+			Vector3 pointA = a.getComponent<TransformComponent>().position;
+			Vector3 pointB = b.getComponent<TransformComponent>().position;
+			Vector3 pointC = c.getComponent<TransformComponent>().position;
+
+			// Get the two vectors
+			Vector3 BA = pointA - pointB;
+			Vector3 BC = pointC - pointB;
+			Vector3 Cross = TriangleMath::CROSS(BA, BC);
+
+			
 		}
 	};
 }
