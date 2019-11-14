@@ -13,7 +13,7 @@ namespace Reality
 	private:
 		bool keyReleased = true;
 	public:
-		Mix::Entity entity;
+		ECSEntity UniqueSphere;
 		SphereSpawnSystem();
 		void Update(float deltaTime);
 	};

@@ -132,9 +132,6 @@
     <ClCompile Include="DynamicSpotLightSystem.cpp">
       <Filter>Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="SphereContactGeneratorSystem.cpp">
-      <Filter>TestCS</Filter>
-    </ClCompile>
     <ClCompile Include="RigidBodySystem.cpp">
       <Filter>Physics</Filter>
     </ClCompile>
@@ -158,6 +155,9 @@
     </ClCompile>
     <ClCompile Include="SphereSpawnSystem.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SphereContactGeneratorSystem.cpp">
+      <Filter>Physics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -296,12 +296,6 @@
     <ClInclude Include="DynamicSpotLightSystem.h">
       <Filter>Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="SphereComponent.h">
-      <Filter>TestCS</Filter>
-    </ClInclude>
-    <ClInclude Include="SphereContactGeneratorSystem.h">
-      <Filter>TestCS</Filter>
-    </ClInclude>
     <ClInclude Include="RigidBodyComponent.h">
       <Filter>Physics</Filter>
     </ClInclude>
@@ -346,6 +340,12 @@
     </ClInclude>
     <ClInclude Include="TriangleMath.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SphereContactGeneratorSystem.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="SphereComponent.h">
+      <Filter>Physics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

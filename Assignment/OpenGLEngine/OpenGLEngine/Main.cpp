@@ -273,16 +273,10 @@ void BuildBridge(ECSWorld& world)
 			eRodDPD.addComponent<RodComponent>(eD, ePD, newWidth);
 
 			auto eTriangle1 = world.createEntity();
-			auto& tempa = ePC.getComponent<TransformComponent>().position;
-			auto& tempb = ePD.getComponent<TransformComponent>().position;
-			auto& tempc = eC.getComponent<TransformComponent>().position;
-			eTriangle1.addComponent<TriangleComponent>(ePC, ePD, eC, tempa, tempb, tempc);
+			eTriangle1.addComponent<TriangleComponent>(ePC, ePD, eC);
 
 			auto eTriangle2 = world.createEntity();
-			auto& tempa2 = ePD.getComponent<TransformComponent>().position;
-			auto& tempb2 = eD.getComponent<TransformComponent>().position;
-			auto& tempc2 = eC.getComponent<TransformComponent>().position;
-			eTriangle2.addComponent<TriangleComponent>(ePD, eD, eC, tempa2, tempb2, tempc2);
+			eTriangle2.addComponent<TriangleComponent>(ePD, eD, eC);
 		}
 		ePC = eC;
 		ePD = eD;
@@ -301,7 +295,7 @@ void SetupLights(ECSWorld& world)
 	// Lanterns
 	auto pl1 = world.createEntity();
 	pl1.addComponent<TransformComponent>(Vector3(22, 14, 48.5f));
-	pl1.addComponent<DynamicPointLightComponent>(100.0f, Color(0.1, 0, 0), Color(1.0f, 0.0f, 0.0f), Color(1.0f, 0.0f, 0.0f));
+	pl1.addComponent<DynamicPointLightComponent>(100.0f, Color(0.1f, 0, 0), Color(1.0f, 0.0f, 0.0f), Color(1.0f, 0.0f, 0.0f));
 	pl1.addComponent<ParticleComponent>();
 	auto hook = world.createEntity();
 	hook.addComponent<TransformComponent>(Vector3(23, 15, 48.0f));
@@ -343,7 +337,7 @@ void SetupLights(ECSWorld& world)
 
 	auto pl4 = world.createEntity();
 	pl4.addComponent<TransformComponent>(Vector3(-14.5f, 14, -61.5f));
-	pl4.addComponent<DynamicPointLightComponent>(100.0f, Color(0.1, 0.05, 0), Color(1.0f, 0.55f, 0.0f), Color(1.0f, 0.55f, 0.0f));
+	pl4.addComponent<DynamicPointLightComponent>(100.0f, Color(0.1f, 0.05f, 0), Color(1.0f, 0.55f, 0.0f), Color(1.0f, 0.55f, 0.0f));
 	pl4.addComponent<ParticleComponent>();
 	hook = world.createEntity();
 	hook.addComponent<TransformComponent>(Vector3(-14.5f - 1, 14, -61.5f -1));
