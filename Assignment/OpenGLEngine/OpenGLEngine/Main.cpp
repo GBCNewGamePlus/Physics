@@ -66,7 +66,7 @@ int main()
 	world.getSystemManager().addSystem<GravityForceGeneratorSystem>();
 	world.getSystemManager().addSystem<FixedSpringForceGeneratorSystem>();
 	world.getSystemManager().addSystem<PairedSpringForceGeneratorSystem>();
-	//world.getSystemManager().addSystem<SphereContactGeneratorSystem>();
+	world.getSystemManager().addSystem<SphereContactGeneratorSystem>();
 	world.getSystemManager().addSystem<CableComponentSystem>();
 	world.getSystemManager().addSystem<RodSystem>();
 	world.getSystemManager().addSystem<ParticleContactResolutionSystem>();
@@ -133,7 +133,7 @@ int main()
 
 		// Physics Solvers
 
-		//world.getSystemManager().getSystem<SphereContactGeneratorSystem>().Update(fixedDeltaTime);
+		world.getSystemManager().getSystem<SphereContactGeneratorSystem>().Update(fixedDeltaTime);
 		world.getSystemManager().getSystem<CableComponentSystem>().Update(fixedDeltaTime);
 		world.getSystemManager().getSystem<RodSystem>().Update(fixedDeltaTime);
 		world.getSystemManager().getSystem<ParticleContactResolutionSystem>().Update(fixedDeltaTime);
@@ -273,10 +273,16 @@ void BuildBridge(ECSWorld& world)
 			eRodDPD.addComponent<RodComponent>(eD, ePD, newWidth);
 
 			auto eTriangle1 = world.createEntity();
-			eTriangle1.addComponent<TriangleComponent>(ePC, ePD, eC);
+			auto& tempa = ePC.getComponent<TransformComponent>().position;
+			auto& tempb = ePD.getComponent<TransformComponent>().position;
+			auto& tempc = eC.getComponent<TransformComponent>().position;
+			eTriangle1.addComponent<TriangleComponent>(ePC, ePD, eC, tempa, tempb, tempc);
 
 			auto eTriangle2 = world.createEntity();
-			eTriangle2.addComponent<TriangleComponent>(ePD, eD, eC);
+			auto& tempa2 = ePD.getComponent<TransformComponent>().position;
+			auto& tempb2 = eD.getComponent<TransformComponent>().position;
+			auto& tempc2 = eC.getComponent<TransformComponent>().position;
+			eTriangle2.addComponent<TriangleComponent>(ePD, eD, eC, tempa2, tempb2, tempc2);
 		}
 		ePC = eC;
 		ePD = eD;

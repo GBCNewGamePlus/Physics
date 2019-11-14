@@ -16,14 +16,14 @@ namespace Reality
 		Vector3 tempb;
 		Vector3 tempc;
 
-		TriangleComponent(ECSEntity a = ECSEntity(), ECSEntity b = ECSEntity(), ECSEntity c = ECSEntity())
+		TriangleComponent(ECSEntity a = ECSEntity(), ECSEntity b = ECSEntity(), ECSEntity c = ECSEntity(), Vector3 _a = Vector3(0,0,0), Vector3 _b = Vector3(0, 0, 0), Vector3 _c = Vector3(0, 0, 0))
 		{
 			entityA = a;
 			entityB = b;
 			entityC = c;
-			tempa = a.getComponent<TransformComponent>().position;
-			tempb = b.getComponent<TransformComponent>().position;
-			tempc = c.getComponent<TransformComponent>().position;
+			tempa = _a;
+			tempb = _b;
+			tempc = _c;
 			AB = tempa - tempb;
 			BC = tempb - tempc;
 			CA = tempc - tempa;
