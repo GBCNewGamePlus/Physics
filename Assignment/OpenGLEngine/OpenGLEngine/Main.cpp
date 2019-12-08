@@ -125,7 +125,7 @@ int main()
 
 		// Physics
 		//float fixedDeltaTime = glfwGetKey(world.data.renderUtil->window->glfwWindow, GLFW_KEY_SPACE) == GLFW_PRESS ? 1 / 60.0f : 0;		
-		float fixedDeltaTime = 1 / 60.0f;
+		float fixedDeltaTime = 1 / 30.0f;
 		// Force Generators
 		world.getSystemManager().getSystem<GravityForceGeneratorSystem>().Update(fixedDeltaTime);
 		world.getSystemManager().getSystem<FixedSpringForceGeneratorSystem>().Update(fixedDeltaTime);
