@@ -54,7 +54,6 @@ void MakeFlight(ECSWorld& world);
 void TestContacts(ECSWorld& world);
 void BuildFloor(ECSWorld& world);
 void SetupLights(ECSWorld& world);
-void BuildBody(ECSWorld& world);
 
 int main()
 {
@@ -78,7 +77,7 @@ int main()
 	//wall.addComponent<ModelComponent>("Resources/Models/Sponza-master/sponza.obj");
 
 	SetupLights(world);
-	//MakeABunchaObjects(world);
+	MakeABunchaObjects(world);
 	//MakeABunchaSpheres(world);
 	//MakeABunchaSprings(world);
 	//MakeACable(world);
@@ -190,7 +189,7 @@ int main()
 		// Update Transform
 		world.getSystemManager().getSystem<UpdateTransformMatricesSystem>().Update(deltaTime);
 		// Physics
-		float fixedDeltaTime = glfwGetKey(world.data.renderUtil->window->glfwWindow, GLFW_KEY_SPACE) == GLFW_PRESS ? 1 / 60.0f : 0;		
+		float fixedDeltaTime = 1 / 60.0f;
 		//float fixedDeltaTime = 1 / 60.0f;
 		world.getSystemManager().getSystem<AeroSystem>().Update(fixedDeltaTime);
 		world.getSystemManager().getSystem<AeroSystem>().Update(fixedDeltaTime);
@@ -288,17 +287,39 @@ void LoadModels(ECSWorld& world)
 
 void MakeABunchaObjects(ECSWorld& world)
 {
-	auto e = world.createEntity();
-	e.addComponent<TransformComponent>(Vector3(4, 10.0f, 48), Vector3(0.10f, 0.1f, 0.1f), Vector3(-90, 180, 0));
-	// Add mesh
-	e.addComponent<ModelComponent>("Resources/Models/supermarine-spitfire/spitfire.fbx");
-	e.addComponent<RotateComponent>(0, 40, 0);
-
-	e = world.createEntity();
-	e.addComponent<TransformComponent>(Vector3(4, 10.0f, -62), Vector3(0.1f, 0.1f, 0.1f), Vector3(-90, 0, 0));
-	// Add mesh
-	e.addComponent<ModelComponent>("Resources/Models/supermarine-spitfire/spitfire.fbx");
-	e.addComponent<RotateComponent>(0, 40, 0);
+	Vector3 tempPos[12] = {Vector3 (0.7f, 1.7f, 1), Vector3 (4.1f, 1.7f, 1), Vector3 (0.7f, 5.4f, 1), Vector3 (4.1f, 5.4f, 1),
+						   Vector3 (2.4f, 8.6f, 1), Vector3 (2.4f, 10.3f, 1), Vector3 (2.4f, 12.5f, 1), Vector3 (-1.5f, 13, 1),
+						   Vector3 (6.1f, 13, 1), Vector3 (-4.2f, 13, 1), Vector3 (8.8f, 13, 1), Vector3 (2.4f, 15.2f, 1)};
+	Vector3 tempSize[12] = { Vector3 (1,3,1), Vector3 (1,3,1), Vector3(1,4,1), Vector3(1,4,1),
+							 Vector3 (4,2,1), Vector3 (2,1,1), Vector3(4,2,1), Vector3(3,1,1),
+							 Vector3 (3,1,1), Vector3 (2,1,1), Vector3(2,1,1), Vector3(2,2,1)};
+	int connect[12][4] = { {2,-1,-1,-1}, {3,-1,-1,-1}, {0, 4,-1,-1}, {1, 4,-1,-1},
+						  {2, 3, 5,-1}, {4, 6,-1,-1}, {5, 7,11, 8}, {9, 6,-1,-1},
+						  {6,10,-1,-1}, {7,-1,-1,-1}, {8,-1,-1,-1}, {6,-1,-1,-1} };
+	Mix::Entity temp[12];
+	for (int i = 0; i < 12; i++)
+	{
+		auto object2 = world.createEntity();
+		object2.addComponent<TransformComponentV2>(tempPos[i], tempSize[i], Vector3(0,0,0));
+		object2.addComponent<ParticleComponent>();
+		object2.addComponent<RigidBodyComponent>(10.0f, 0.1f, 0.1f, Vector3(0, 0, 0), Vector3(0, 0, 0), 5);
+		temp[i] = object2;
+		auto objectCol2 = world.createEntity();
+		objectCol2.addComponent<BoxColliderComponent>(object2, tempSize[i]);
+	}
+	for (int i = 0; i < 12; i++)
+	{
+	
+		for (int j = 0; j < 4; j++) {
+			if (connect[i][j] != -1) {
+				auto e = world.createEntity();
+				e.addComponent<CableComponent>(temp[i], temp[connect[i][j]], 0.5, 100);
+			}
+			
+		}
+		
+	}
+	
 }
 
 void MakeABunchaSprings(ECSWorld& world)
@@ -565,14 +586,7 @@ void BuildFloor(ECSWorld& world)
 	//objectCol1.addComponent<SphereColliderComponent>(object1, 10);
 
 	// Object 2
-	for (int i = 0; i < 40; i++)
-	{
-		auto object2 = world.createEntity();
-		object2.addComponent<TransformComponentV2>(Vector3(RANDOM_FLOAT(-50.0f, 50.0f), 50, RANDOM_FLOAT(-50.0f, 50.0f)), Vector3(1, 1, 1), Vector3(RANDOM_FLOAT(0, 180), RANDOM_FLOAT(0, 180), RANDOM_FLOAT(0, 180)));
-		object2.addComponent<RigidBodyComponent>(10.0f, 0.1f, 0.1f, Vector3(0, 0, 0), Vector3(0, 0, 0), 5);
-		auto objectCol2 = world.createEntity();
-		objectCol2.addComponent<BoxColliderComponent>(object2, Vector3(10, 10, 10));
-	}
+	
 }
 
 void SetupLights(ECSWorld& world)

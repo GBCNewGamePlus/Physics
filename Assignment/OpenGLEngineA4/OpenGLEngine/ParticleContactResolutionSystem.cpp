@@ -1,6 +1,7 @@
 #include "ParticleContactResolutionSystem.h"
 #include "ParticleComponent.h"
 #include "TransformComponent.h"
+#include "TransformComponentV2.h"
 
 namespace Reality
 {
@@ -103,12 +104,12 @@ namespace Reality
 		contact.deltaMovePerMass = movePerMass;
 		if (isAvalid)
 		{
-			contact.entityA.getComponent<TransformComponent>().position -= movePerMass * invM1;
+			contact.entityA.getComponent<TransformComponentV2>().SetPosition(contact.entityA.getComponent<TransformComponentV2>().GetPosition() -= movePerMass * invM1);
 		}
 
 		if (isBvalid)
 		{
-			contact.entityB.getComponent<TransformComponent>().position += movePerMass * invM2;
+			contact.entityB.getComponent<TransformComponentV2>().SetPosition(contact.entityB.getComponent<TransformComponentV2>().GetPosition() -= movePerMass * invM1);
 		}
 		//contact.penetration = 0;
 	}

@@ -1,4 +1,4 @@
-#include "CableComponentSystem.h"
+#include "JointSystem.h"
 #include "TransformComponent.h"
 #include "ParticleContactComponent.h"
 #include "TransformComponentV2.h"
@@ -9,19 +9,19 @@
 
 namespace Reality
 {
-	CableComponentSystem::CableComponentSystem()
+	JointSystem::JointSystem()
 	{
-		requireComponent<CableComponent>();
+		requireComponent<JointSystem>();
 	}
 
-	void CableComponentSystem::Update(float deltaTime)
+	void JointSystem::Update(float deltaTime)
 	{
 		for (auto e : getEntities())
 		{
-			auto& cable = e.getComponent<CableComponent>();
+			auto& cable = e.getComponent<Joint>();
 			float length = glm::length(cable.entityA.getComponent<TransformComponentV2>().GetPosition() -
 				cable.entityB.getComponent<TransformComponentV2>().GetPosition());
-			
+
 			getWorld().data.renderUtil->DrawSphere(cable.entityA.getComponent<TransformComponentV2>().GetPosition(), 1, Color::Magenta);
 			getWorld().data.renderUtil->DrawSphere(cable.entityB.getComponent<TransformComponentV2>().GetPosition(), 1, Color::Magenta);
 
