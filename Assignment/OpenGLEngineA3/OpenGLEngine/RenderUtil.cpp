@@ -146,7 +146,7 @@ namespace Reality
 
 	void RenderUtil::ClearDisplay(GLFWwindow* window)
 	{
-		glClearColor(0.0f, 0.025f, 0.05f, 1.0f);
+		glClearColor(0.8f, 0.8f, 0.8f, 1);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		verts = 0;
 		triangles = 0;

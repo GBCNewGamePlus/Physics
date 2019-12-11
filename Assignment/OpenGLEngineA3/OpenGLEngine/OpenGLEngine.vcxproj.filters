@@ -46,6 +46,18 @@
     <Filter Include="TestCS\FlightSim">
       <UniqueIdentifier>{1a9d715c-69e4-4d0c-b881-159070a97fa6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Physics\Spring">
+      <UniqueIdentifier>{b3e3c171-005b-4dd9-87bc-d66d1f2819e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Physics\Buoyancy">
+      <UniqueIdentifier>{d9cfdc2a-361f-4695-abb2-5736d80f5762}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Physics\CablesAndRods">
+      <UniqueIdentifier>{0e2a463e-8aaa-4dd3-8f92-f42eaba52e9c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TestCS\BoatSim">
+      <UniqueIdentifier>{dd2de0f6-1b1a-4dcd-aaa5-629001dfd7a1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="glad.c">
@@ -93,12 +105,6 @@
     <ClCompile Include="ForceAccumulatorSystem.cpp">
       <Filter>Physics\Particles</Filter>
     </ClCompile>
-    <ClCompile Include="FixedSpringForceGeneratorSystem.cpp">
-      <Filter>Physics</Filter>
-    </ClCompile>
-    <ClCompile Include="PairedSpringForceGeneratorSystem.cpp">
-      <Filter>Physics</Filter>
-    </ClCompile>
     <ClCompile Include="ParticleContactResolutionSystem.cpp">
       <Filter>Physics</Filter>
     </ClCompile>
@@ -138,12 +144,6 @@
     <ClCompile Include="SphereContactGeneratorSystem.cpp">
       <Filter>TestCS</Filter>
     </ClCompile>
-    <ClCompile Include="CableComponentSystem.cpp">
-      <Filter>TestCS</Filter>
-    </ClCompile>
-    <ClCompile Include="RodSystem.cpp">
-      <Filter>TestCS</Filter>
-    </ClCompile>
     <ClCompile Include="RigidBodySystem.cpp">
       <Filter>Physics</Filter>
     </ClCompile>
@@ -152,9 +152,6 @@
     </ClCompile>
     <ClCompile Include="UpdateTransformMatricesSystem.cpp">
       <Filter>ComponentsCore</Filter>
-    </ClCompile>
-    <ClCompile Include="ForceAndTorqueAccumulatorSystem.cpp">
-      <Filter>Physics</Filter>
     </ClCompile>
     <ClCompile Include="RenderingSystemV2.cpp">
       <Filter>Rendering</Filter>
@@ -185,6 +182,27 @@
     </ClCompile>
     <ClCompile Include="LifeTimeSystem.cpp">
       <Filter>TestCS\FlightSim</Filter>
+    </ClCompile>
+    <ClCompile Include="FixedSpringForceGeneratorSystem.cpp">
+      <Filter>Physics\Spring</Filter>
+    </ClCompile>
+    <ClCompile Include="ForceAndTorqueAccumulatorSystem.cpp">
+      <Filter>Physics\Spring</Filter>
+    </ClCompile>
+    <ClCompile Include="PairedSpringForceGeneratorSystem.cpp">
+      <Filter>Physics\Spring</Filter>
+    </ClCompile>
+    <ClCompile Include="BuoyancyDensitySystem.cpp">
+      <Filter>Physics\Buoyancy</Filter>
+    </ClCompile>
+    <ClCompile Include="BuoyancyForceGeneratorSystem.cpp">
+      <Filter>Physics\Buoyancy</Filter>
+    </ClCompile>
+    <ClCompile Include="CableComponentSystem.cpp">
+      <Filter>Physics\CablesAndRods</Filter>
+    </ClCompile>
+    <ClCompile Include="RodSystem.cpp">
+      <Filter>Physics\CablesAndRods</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -278,18 +296,6 @@
     <ClInclude Include="ForceAccumulatorSystem.h">
       <Filter>Physics\Particles</Filter>
     </ClInclude>
-    <ClInclude Include="FixedSpringComponent.h">
-      <Filter>Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="FixedSpringForceGeneratorSystem.h">
-      <Filter>Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="PairedSpringComponent.h">
-      <Filter>Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="PairedSpringForceGeneratorSystem.h">
-      <Filter>Physics</Filter>
-    </ClInclude>
     <ClInclude Include="ParticleContactComponent.h">
       <Filter>Physics</Filter>
     </ClInclude>
@@ -341,18 +347,6 @@
     <ClInclude Include="SphereContactGeneratorSystem.h">
       <Filter>TestCS</Filter>
     </ClInclude>
-    <ClInclude Include="CableComponent.h">
-      <Filter>TestCS</Filter>
-    </ClInclude>
-    <ClInclude Include="CableComponentSystem.h">
-      <Filter>TestCS</Filter>
-    </ClInclude>
-    <ClInclude Include="RodComponent.h">
-      <Filter>TestCS</Filter>
-    </ClInclude>
-    <ClInclude Include="RodSystem.h">
-      <Filter>TestCS</Filter>
-    </ClInclude>
     <ClInclude Include="RigidBodyComponent.h">
       <Filter>Physics</Filter>
     </ClInclude>
@@ -364,9 +358,6 @@
     </ClInclude>
     <ClInclude Include="UpdateTransformMatricesSystem.h">
       <Filter>ComponentsCore</Filter>
-    </ClInclude>
-    <ClInclude Include="ForceAndTorqueAccumulatorSystem.h">
-      <Filter>Physics</Filter>
     </ClInclude>
     <ClInclude Include="RenderingSystemV2.h">
       <Filter>Rendering</Filter>
@@ -428,6 +419,45 @@
     <ClInclude Include="LifeTimeSystem.h">
       <Filter>TestCS\FlightSim</Filter>
     </ClInclude>
+    <ClInclude Include="FixedSpringComponent.h">
+      <Filter>Physics\Spring</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedSpringForceGeneratorSystem.h">
+      <Filter>Physics\Spring</Filter>
+    </ClInclude>
+    <ClInclude Include="ForceAndTorqueAccumulatorSystem.h">
+      <Filter>Physics\Spring</Filter>
+    </ClInclude>
+    <ClInclude Include="PairedSpringComponent.h">
+      <Filter>Physics\Spring</Filter>
+    </ClInclude>
+    <ClInclude Include="PairedSpringForceGeneratorSystem.h">
+      <Filter>Physics\Spring</Filter>
+    </ClInclude>
+    <ClInclude Include="BuoyancyComponent.h">
+      <Filter>Physics\Buoyancy</Filter>
+    </ClInclude>
+    <ClInclude Include="BuoyancyDensitySystem.h">
+      <Filter>Physics\Buoyancy</Filter>
+    </ClInclude>
+    <ClInclude Include="BuoyancyForceGeneratorSystem.h">
+      <Filter>Physics\Buoyancy</Filter>
+    </ClInclude>
+    <ClInclude Include="CableComponent.h">
+      <Filter>Physics\CablesAndRods</Filter>
+    </ClInclude>
+    <ClInclude Include="CableComponentSystem.h">
+      <Filter>Physics\CablesAndRods</Filter>
+    </ClInclude>
+    <ClInclude Include="RodComponent.h">
+      <Filter>Physics\CablesAndRods</Filter>
+    </ClInclude>
+    <ClInclude Include="RodSystem.h">
+      <Filter>Physics\CablesAndRods</Filter>
+    </ClInclude>
+    <ClInclude Include="BoatSimulatorComponent.h">
+      <Filter>TestCS\BoatSim</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\Lighting_Maps.vs">
@@ -458,6 +488,15 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="text.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\FragmentBuoyancy.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\FragmentTransparent.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\VertexBuoyancy.vs">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

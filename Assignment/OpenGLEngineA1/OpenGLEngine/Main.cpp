@@ -33,7 +33,7 @@ void LoadAssets(ECSWorld& world);
 //void MakeABunchaSprings(ECSWorld& world);
 void MakeABunchaPlanets(ECSWorld& world);
 //void MakeBungeeChordSeed(ECSWorld& world);
-//void MakeBucket(ECSWorld& world);
+void MakeBucket(ECSWorld& world);
 
 int main()
 {
@@ -63,17 +63,17 @@ int main()
 	//MakeBungeeChordSeed(world);
 
 	// Uncomment for part 2
-	//MakeBucket(world);
+	MakeBucket(world);
 
 	// Uncomment for part 3
-	MakeABunchaPlanets(world);
+	//MakeABunchaPlanets(world);
 	// Create Systems
 	world.getSystemManager().addSystem<RenderingSystem>();
 	world.getSystemManager().addSystem<InputEventSystem>();
 	world.getSystemManager().addSystem<RotateSystem>();
 	world.getSystemManager().addSystem<ParticleSystem>();
 	world.getSystemManager().addSystem<ParticleSpawnerSystem>();
-	//world.getSystemManager().addSystem<GravityForceGeneratorSystem>();
+	world.getSystemManager().addSystem<GravityForceGeneratorSystem>();
 	world.getSystemManager().addSystem<FixedSpringForceGeneratorSystem>();
 	world.getSystemManager().addSystem<PairedSpringForceGeneratorSystem>();
 	world.getSystemManager().addSystem<NBodyForceGeneratorSystem>();
@@ -120,7 +120,7 @@ int main()
 
 		// Physics
 		// Force Generators
-		//world.getSystemManager().getSystem<GravityForceGeneratorSystem>().Update(deltaTime);
+		world.getSystemManager().getSystem<GravityForceGeneratorSystem>().Update(deltaTime);
 		world.getSystemManager().getSystem<BungeeCordForceGeneratorSystem>().Update(deltaTime);
 		world.getSystemManager().getSystem<BuoyancyForceGeneratorSystem>().Update(deltaTime);
 		world.getSystemManager().getSystem<FixedSpringForceGeneratorSystem>().Update(deltaTime);

@@ -130,6 +130,8 @@
       </SubType>
     </ClCompile>
     <ClCompile Include="AssetLoader.cpp" />
+    <ClCompile Include="BuoyancyDensitySystem.cpp" />
+    <ClCompile Include="BuoyancyForceGeneratorSystem.cpp" />
     <ClCompile Include="CableComponentSystem.cpp" />
     <ClCompile Include="CameraLookSystem.cpp">
       <SubType>
@@ -238,6 +240,10 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="AssetLoader.h" />
+    <ClInclude Include="BoatSimulatorComponent.h" />
+    <ClInclude Include="BuoyancyComponent.h" />
+    <ClInclude Include="BuoyancyDensitySystem.h" />
+    <ClInclude Include="BuoyancyForceGeneratorSystem.h" />
     <ClInclude Include="CableComponent.h" />
     <ClInclude Include="CableComponentSystem.h" />
     <ClInclude Include="Camera.h" />
@@ -392,13 +398,16 @@
     <ClInclude Include="WorldData.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Shaders\FragmentBuoyancy.fs" />
     <None Include="Shaders\FragmentConstant.fs" />
     <None Include="Shaders\fragmentDefault.fs" />
+    <None Include="Shaders\FragmentTransparent.fs" />
     <None Include="Shaders\Lamp.fs" />
     <None Include="Shaders\Lamp.vs" />
     <None Include="Shaders\Lighting_Maps.fs" />
     <None Include="Shaders\Lighting_Maps.vs" />
     <None Include="Shaders\SimpleVertex.vs" />
+    <None Include="Shaders\VertexBuoyancy.vs" />
     <None Include="Shaders\vertexDefault.vs" />
     <None Include="text.fs" />
     <None Include="text.vs" />
