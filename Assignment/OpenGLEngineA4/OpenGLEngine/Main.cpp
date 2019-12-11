@@ -303,12 +303,12 @@ void MakeABunchaObjects(ECSWorld& world)
 							 /*3*/ {Vector3(0,-2,0),Vector3(0,2,0),Vector3(0,0,0),Vector3(0,0,0)},
 							 /*4*/ {Vector3(-1,-1,0),Vector3(1,-1,0),Vector3(0,1,0),Vector3(0,0,0)},
 							 /*5*/ {Vector3(0,-1,0),Vector3(0,1,0),Vector3(0,0,0),Vector3(0,0,0)},
-							 /*6*/ {Vector3(0,-1,0),Vector3(-2,0.5f,0),Vector3(2,0.5f,0),Vector3(0,0,0)},
-							 /*7*/ {Vector3(0,0,0),Vector3(0,0,0),Vector3(0,0,0),Vector3(0,0,0)},
-							 /*8*/ {Vector3(0,0,0),Vector3(0,0,0),Vector3(0,0,0),Vector3(0,0,0)},
-							 /*9*/ {Vector3(0,0,0),Vector3(0,0,0),Vector3(0,0,0),Vector3(0,0,0)},
-							 /*10*/ {Vector3(0,0,0),Vector3(0,0,0),Vector3(0,0,0),Vector3(0,0,0)},
-							 /*11*/ {Vector3(0,0,0),Vector3(0,0,0),Vector3(0,0,0),Vector3(0,0,0)},
+							 /*6*/ {Vector3(0,-1,0),Vector3(-2,0.5f,0),Vector3(2,0.5f,0),Vector3(0,1,0)},
+							 /*7*/ {Vector3(-1.5f,0,0),Vector3(1.5f,0,0),Vector3(0,0,0),Vector3(0,0,0)},
+							 /*8*/ {Vector3(-1.5f,0,0),Vector3(1.5f,0,0),Vector3(0,0,0),Vector3(0,0,0)},
+							 /*9*/ {Vector3(1.0f,0,0),Vector3(0,0,0),Vector3(0,0,0),Vector3(0,0,0)},
+							 /*10*/ {Vector3(-1.0f,0,0),Vector3(0,0,0),Vector3(0,0,0),Vector3(0,0,0)},
+							 /*11*/ {Vector3(0,-1.0f,0),Vector3(0,0,0),Vector3(0,0,0),Vector3(0,0,0)},
 	};
 	Mix::Entity temp[12];
 	for (int i = 0; i < 12; i++)
@@ -322,7 +322,7 @@ void MakeABunchaObjects(ECSWorld& world)
 				tempNum++;
 			}
 		}
-		object2.addComponent<Joint>(bones[i][0], bones[i][0], bones[i][0], bones[i][0], tempNum);
+		object2.addComponent<Joint>(bones[i][0], bones[i][1], bones[i][2], bones[i][3], tempNum);
 		temp[i] = object2;
 		auto objectCol2 = world.createEntity();
 		objectCol2.addComponent<BoxColliderComponent>(object2, tempSize[i]);

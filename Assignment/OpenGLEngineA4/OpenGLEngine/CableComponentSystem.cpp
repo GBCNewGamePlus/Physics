@@ -63,13 +63,13 @@ namespace Reality
 				cable.restitution,
 				normal,
 				penetration);*/
-			getWorld().getEventManager().emitEvent<ContactEvent>(cable.entityA, cable.entityB,
-				normal,
+				getWorld().getEventManager().emitEvent<ContactEvent>(cable.entityA, cable.entityB,
+					Vector3(normal.x, normal.y, normal.z),
 				penetration,
-				eALocalBone,
-				eBLocalBone,
-				eAWorldBone,
-				eBWorldBone);
+				Vector3(eALocalBone.x, eALocalBone.y, eALocalBone.z),
+				Vector3(eBLocalBone.x, eBLocalBone.y, eBLocalBone.z),
+				Vector3(eAWorldBone.x, eAWorldBone.y, eAWorldBone.z),
+				Vector3(eBWorldBone.x, eBWorldBone.y, eBWorldBone.z));
 			//getWorld().getEventManager().emitEvent<ContactEvent>(cable.entityA, cable.entityB);
 		}
 	}
