@@ -9,7 +9,8 @@ namespace Reality
 		requireComponent<AeroComponent>();
 	}
 
-	void AeroSystem::UpdateForceFromTensor(ECSWorld& world, AeroComponent& aero, RigidBodyComponent& body, TransformComponentV2& transform)
+	void AeroSystem::UpdateForceFromTensor(ECSWorld& world, AeroComponent& aero, 
+		                                   RigidBodyComponent& body, TransformComponentV2& transform)
 	{
 		// Calculate total velocity (windspeed and body's velocity).
 		Vector3 velocity = body.velocity;

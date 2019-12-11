@@ -1,6 +1,6 @@
 #pragma once
 #include "ECSConfig.h"
-#include "BuoyancySpawnComponent.h"
+#include "BuoyancyComponent.h"
 
 namespace Reality
 {

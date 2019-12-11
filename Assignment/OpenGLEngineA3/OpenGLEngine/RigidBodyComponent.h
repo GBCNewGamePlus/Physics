@@ -5,8 +5,12 @@ namespace Reality
 {
 	struct RigidBodyComponent
 	{
-		RigidBodyComponent(float mass = 1.0f, float _linearDamping = 0.4f, float _angularDamping = 0.3f, Vector3 _velocity = Vector3(0, 0, 0), Vector3 _angularVelocity = Vector3(0, 0, 0), float _gravityScale = 1)
-			: inverseMass(1.0f / mass),  velocity(_velocity), angularVelocity(_angularVelocity), linearDamping(_linearDamping), angularDamping(_angularDamping)
+		RigidBodyComponent(float mass = 1.0f, float _linearDamping = 0.4f, float _angularDamping = 0.3f, 
+			               Vector3 _velocity = Vector3(0, 0, 0), Vector3 _angularVelocity = Vector3(0, 0, 0), 
+			               float _gravityScale = 1)
+			: inverseMass(1.0f / mass),  velocity(_velocity), angularVelocity(_angularVelocity), 
+			  linearDamping(_linearDamping), angularDamping(_angularDamping), 
+			  gravityScale(_gravityScale)
 		{
 			inertiaTensor = glm::mat3(0.0f);
 			inertiaTensor[0][0] = (1.0f / 12.0f) * mass * (2.0f);

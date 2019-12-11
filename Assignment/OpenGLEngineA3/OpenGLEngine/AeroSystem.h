@@ -11,7 +11,7 @@ namespace Reality
 	public:
 		AeroSystem();
 		void Update(float deltaTime);
-		Vector3 windspeed = Vector3(0, 0, 0);
+		Vector3 windspeed = Vector3(0, 0, 10);
 	private:
 		void UpdateForceFromTensor(ECSWorld& world, AeroComponent& aero, RigidBodyComponent& body, TransformComponentV2& transform);
 	};

@@ -186,9 +186,6 @@
     <ClCompile Include="FixedSpringForceGeneratorSystem.cpp">
       <Filter>Physics\Spring</Filter>
     </ClCompile>
-    <ClCompile Include="ForceAndTorqueAccumulatorSystem.cpp">
-      <Filter>Physics\Spring</Filter>
-    </ClCompile>
     <ClCompile Include="PairedSpringForceGeneratorSystem.cpp">
       <Filter>Physics\Spring</Filter>
     </ClCompile>
@@ -203,6 +200,12 @@
     </ClCompile>
     <ClCompile Include="RodSystem.cpp">
       <Filter>Physics\CablesAndRods</Filter>
+    </ClCompile>
+    <ClCompile Include="WaterSystem.cpp">
+      <Filter>TestCS\BoatSim</Filter>
+    </ClCompile>
+    <ClCompile Include="ForceAndTorqueAccumulatorSystem.cpp">
+      <Filter>Physics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -425,9 +428,6 @@
     <ClInclude Include="FixedSpringForceGeneratorSystem.h">
       <Filter>Physics\Spring</Filter>
     </ClInclude>
-    <ClInclude Include="ForceAndTorqueAccumulatorSystem.h">
-      <Filter>Physics\Spring</Filter>
-    </ClInclude>
     <ClInclude Include="PairedSpringComponent.h">
       <Filter>Physics\Spring</Filter>
     </ClInclude>
@@ -457,6 +457,15 @@
     </ClInclude>
     <ClInclude Include="BoatSimulatorComponent.h">
       <Filter>TestCS\BoatSim</Filter>
+    </ClInclude>
+    <ClInclude Include="WaterComponent.h">
+      <Filter>TestCS\BoatSim</Filter>
+    </ClInclude>
+    <ClInclude Include="WaterSystem.h">
+      <Filter>TestCS\BoatSim</Filter>
+    </ClInclude>
+    <ClInclude Include="ForceAndTorqueAccumulatorSystem.h">
+      <Filter>Physics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

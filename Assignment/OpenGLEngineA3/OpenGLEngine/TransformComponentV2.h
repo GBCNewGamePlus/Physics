@@ -6,7 +6,8 @@ namespace Reality
 {
 	struct TransformComponentV2
 	{
-		TransformComponentV2(Vector3 _position = Vector3(0, 0, 0), Vector3 _scale = Vector3(1, 1, 1), Vector3 _eulerAngles = Vector3(0.0f, 0.0f, 0.0f)) :
+		TransformComponentV2(Vector3 _position = Vector3(0, 0, 0), Vector3 _scale = Vector3(1, 1, 1), 
+			Vector3 _eulerAngles = Vector3(0.0f, 0.0f, 0.0f)) :
 			position(_position), scale(_scale)
 		{
 			SetRotation(_eulerAngles);

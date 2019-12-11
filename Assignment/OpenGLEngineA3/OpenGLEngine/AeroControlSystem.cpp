@@ -25,7 +25,6 @@ namespace Reality
 					pKey = true;
 				}
 			}
-			
 			for (auto key : control.negetiveKeys)
 			{
 				if (glfwGetKey(getWorld().data.renderUtil->window->glfwWindow, key) == GLFW_PRESS)
@@ -34,12 +33,10 @@ namespace Reality
 					nKey = true;
 				}
 			}
-
 			if (!pKey && !nKey)
 			{
 				aero.controlSetting = 0;
 			}
-
 			aero.controlSetting = glm::clamp(aero.controlSetting, -1.0f, 1.0f);
 		}
 	}
