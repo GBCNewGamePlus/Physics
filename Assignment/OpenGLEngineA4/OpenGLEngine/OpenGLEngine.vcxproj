@@ -183,7 +183,6 @@
       </SubType>
     </ClCompile>
     <ClCompile Include="InputEventSystem.cpp" />
-    <ClCompile Include="JointSystem.cpp" />
     <ClCompile Include="LifeTimeSystem.cpp">
       <SubType>
       </SubType>
@@ -362,7 +361,6 @@
     </ClInclude>
     <ClInclude Include="InputEventSystem.h" />
     <ClInclude Include="Joint.h" />
-    <ClInclude Include="JointSystem.h" />
     <ClInclude Include="LifeTimeComponent.h">
       <SubType>
       </SubType>

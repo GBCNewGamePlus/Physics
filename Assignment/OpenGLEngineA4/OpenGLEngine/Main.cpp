@@ -13,6 +13,7 @@
 #include "SphereContactGeneratorSystem.h"
 #include "ParticleContactResolutionSystem.h"
 #include "CableComponentSystem.h"
+#include "Joint.h"
 #include "RodSystem.h"
 #include "ForceAndTorqueAccumulatorSystem.h"
 #include "RigidBodySystem.h"
@@ -296,13 +297,32 @@ void MakeABunchaObjects(ECSWorld& world)
 	int connect[12][4] = { {2,-1,-1,-1}, {3,-1,-1,-1}, {0, 4,-1,-1}, {1, 4,-1,-1},
 						  {2, 3, 5,-1}, {4, 6,-1,-1}, {5, 7,11, 8}, {9, 6,-1,-1},
 						  {6,10,-1,-1}, {7,-1,-1,-1}, {8,-1,-1,-1}, {6,-1,-1,-1} };
+	Vector3 bones[12][4] = { /*0*/ {Vector3(0.0f,1.5,0.0f),Vector3(0,0,0),Vector3(0,0,0),Vector3(0,0,0)}, //LOCAL POSITION OF ALL BONE JOINTS
+							 /*1*/ {Vector3(0.0f,1.5f,0.0f),Vector3(0,0,0),Vector3(0,0,0),Vector3(0,0,0)},
+							 /*2*/ {Vector3(0,-2,0),Vector3(0,2,0),Vector3(0,0,0),Vector3(0,0,0)},
+							 /*3*/ {Vector3(0,-2,0),Vector3(0,2,0),Vector3(0,0,0),Vector3(0,0,0)},
+							 /*4*/ {Vector3(-1,-1,0),Vector3(1,-1,0),Vector3(0,1,0),Vector3(0,0,0)},
+							 /*5*/ {Vector3(0,-1,0),Vector3(0,1,0),Vector3(0,0,0),Vector3(0,0,0)},
+							 /*6*/ {Vector3(0,-1,0),Vector3(-2,0.5f,0),Vector3(2,0.5f,0),Vector3(0,0,0)},
+							 /*7*/ {Vector3(0,0,0),Vector3(0,0,0),Vector3(0,0,0),Vector3(0,0,0)},
+							 /*8*/ {Vector3(0,0,0),Vector3(0,0,0),Vector3(0,0,0),Vector3(0,0,0)},
+							 /*9*/ {Vector3(0,0,0),Vector3(0,0,0),Vector3(0,0,0),Vector3(0,0,0)},
+							 /*10*/ {Vector3(0,0,0),Vector3(0,0,0),Vector3(0,0,0),Vector3(0,0,0)},
+							 /*11*/ {Vector3(0,0,0),Vector3(0,0,0),Vector3(0,0,0),Vector3(0,0,0)},
+	};
 	Mix::Entity temp[12];
 	for (int i = 0; i < 12; i++)
 	{
 		auto object2 = world.createEntity();
 		object2.addComponent<TransformComponentV2>(tempPos[i], tempSize[i], Vector3(0,0,0));
-		object2.addComponent<ParticleComponent>();
 		object2.addComponent<RigidBodyComponent>(10.0f, 0.1f, 0.1f, Vector3(0, 0, 0), Vector3(0, 0, 0), 5);
+		int tempNum = 0;
+		for (int j = 0; j < 4; j++) {
+			if (bones[i][j] != Vector3(0, 0, 0)) {
+				tempNum++;
+			}
+		}
+		object2.addComponent<Joint>(bones[i][0], bones[i][0], bones[i][0], bones[i][0], tempNum);
 		temp[i] = object2;
 		auto objectCol2 = world.createEntity();
 		objectCol2.addComponent<BoxColliderComponent>(object2, tempSize[i]);
