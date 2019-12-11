@@ -5,7 +5,7 @@ namespace Reality
 {
 	GravityForceGeneratorSystem::GravityForceGeneratorSystem()
 	{
-		requireComponent<ParticleComponent>();
+		requireComponent<RigidBodyComponent>();
 	}
 
 
@@ -13,8 +13,8 @@ namespace Reality
 	{
 		for (auto e : getEntities())
 		{
-			auto &particle = e.getComponent<ParticleComponent>();
-			particle.AddForce(gravity * particle.gravityScale / particle.inverseMass);
+			auto &rigidBody = e.getComponent<RigidBodyComponent>();
+			rigidBody.AddForce(gravity * rigidBody.gravityScale / rigidBody.inverseMass);
 		}
 
 	}

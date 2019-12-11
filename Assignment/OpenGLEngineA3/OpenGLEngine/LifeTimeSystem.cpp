@@ -17,7 +17,7 @@ namespace Reality
 
 			life.timer += deltaTime;
 			life.size = life.startSize + 10.0f * pow(life.timer, 0.5f);
-			getWorld().data.renderUtil->DrawSphere(transform.GetPosition(), life.size, Color::Yellow);
+			getWorld().data.renderUtil->DrawSphere(transform.GetPosition(), life.size, Color::Blue);
 			if (life.timer > life.maxTime)
 			{
 				e.kill();

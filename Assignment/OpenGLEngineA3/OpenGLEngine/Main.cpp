@@ -29,9 +29,16 @@
 #include "AeroSystem.h"
 #include "CameraLookSystem.h"
 #include "LifeTimeSystem.h"
+
+#include "WaterComponent.h"
+#include "WaterSystem.h"
+#include "BuoyancyComponent.h"
+#include "BuoyancyDensitySystem.h"
+#include "BuoyancyForceGeneratorSystem.h"
+
 #include <string>
 #include <stdlib.h>     
-#include <time.h>       
+#include <time.h>  
 
 #define DEBUG_LOG_LEVEL 3
 
@@ -41,6 +48,7 @@ void LoadShaders(ECSWorld& world);
 void LoadModels(ECSWorld& world);
 void MakeFlight(ECSWorld& world);
 void SetupLights(ECSWorld& world);
+void RenderStats(ECSWorld& world, float deltaTime, float logicDelta, float debugDelta);
 
 int main()
 {
@@ -71,23 +79,14 @@ int main()
 	world.getSystemManager().addSystem<ParticleSystem>();
 	world.getSystemManager().addSystem<ParticleSpawnerSystem>();
 	world.getSystemManager().addSystem<GravityForceGeneratorSystem>();
-	world.getSystemManager().addSystem<FixedSpringForceGeneratorSystem>();
-	world.getSystemManager().addSystem<PairedSpringForceGeneratorSystem>();
-	world.getSystemManager().addSystem<SphereContactGeneratorSystem>();
-	world.getSystemManager().addSystem<CableComponentSystem>();
-	world.getSystemManager().addSystem<RodSystem>();
-	world.getSystemManager().addSystem<ParticleContactResolutionSystem>();
-	world.getSystemManager().addSystem<ForceAccumulatorSystem>();
 	world.getSystemManager().addSystem<ForceAndTorqueAccumulatorSystem>();
 	world.getSystemManager().addSystem<RigidBodySystem>();
 	world.getSystemManager().addSystem<FlightSimulatorSystem>();
 	world.getSystemManager().addSystem<FPSControlSystem>();
 	world.getSystemManager().addSystem<FollowCameraSystem>();
 	world.getSystemManager().addSystem<CameraLookSystem>();
-	/*
 	world.getSystemManager().addSystem<InfiniteSpawnSystem>();
 	world.getSystemManager().addSystem<InfiniteSpawnTargetSystem>();
-	*/
 	world.getSystemManager().addSystem<AeroControlSystem>();
 	world.getSystemManager().addSystem<SetAerodynamicTensorSystem>();
 	world.getSystemManager().addSystem<AeroSystem>();
@@ -95,6 +94,10 @@ int main()
 	world.getSystemManager().addSystem<DynamicDirectionalLightSystem>();
 	world.getSystemManager().addSystem<DynamicPointLightSystem>();
 	world.getSystemManager().addSystem<DynamicSpotLightSystem>();
+
+	world.getSystemManager().addSystem<WaterSystem>();
+	world.getSystemManager().addSystem<BuoyancyDensitySystem>();
+	world.getSystemManager().addSystem<BuoyancyForceGeneratorSystem>();
 
 	float time = glfwGetTime();
 	float stepTime = glfwGetTime();
@@ -138,89 +141,45 @@ int main()
 		world.getSystemManager().getSystem<FPSControlSystem>().Update(deltaTime);
 		world.getSystemManager().getSystem<RotateSystem>().Update(deltaTime);
 		world.getSystemManager().getSystem<ParticleSpawnerSystem>().Update(deltaTime);
+		world.getSystemManager().getSystem<BuoyancyDensitySystem>().Update(deltaTime);
 
 		//Flight Sim
 		world.getSystemManager().getSystem<FlightSimulatorSystem>().Update(deltaTime);
 		world.getSystemManager().getSystem<FollowCameraSystem>().Update(deltaTime);
 		world.getSystemManager().getSystem<CameraLookSystem>().Update(deltaTime);
-		/*
 		world.getSystemManager().getSystem<InfiniteSpawnTargetSystem>().Update(deltaTime);
 		world.getSystemManager().getSystem<InfiniteSpawnSystem>().Update(deltaTime);
-		*/
 		world.getSystemManager().getSystem<AeroControlSystem>().Update(deltaTime);
 		world.getSystemManager().getSystem<SetAerodynamicTensorSystem>().Update(deltaTime);
 		world.getSystemManager().getSystem<LifeTimeSystem>().Update(deltaTime);
+		world.getSystemManager().getSystem<WaterSystem>().Update(deltaTime);
 
 		// Update Transform
 		world.getSystemManager().getSystem<UpdateTransformMatricesSystem>().Update(deltaTime);
 		// Physics
-		//float fixedDeltaTime = glfwGetKey(world.data.renderUtil->window->glfwWindow, GLFW_KEY_SPACE) == GLFW_PRESS ? 1 / 60.0f : 0;		
 		float fixedDeltaTime = 1 / 60.0f;
 		world.getSystemManager().getSystem<AeroSystem>().Update(fixedDeltaTime);
 		// Force Generators
 		world.getSystemManager().getSystem<GravityForceGeneratorSystem>().Update(fixedDeltaTime);
-		world.getSystemManager().getSystem<FixedSpringForceGeneratorSystem>().Update(fixedDeltaTime);
-		world.getSystemManager().getSystem<PairedSpringForceGeneratorSystem>().Update(fixedDeltaTime);
-		world.getSystemManager().getSystem<ForceAccumulatorSystem>().Update(fixedDeltaTime);
-		world.getSystemManager().getSystem<ParticleSystem>().Update(fixedDeltaTime);
+		world.getSystemManager().getSystem<BuoyancyForceGeneratorSystem>().Update(fixedDeltaTime);
 		world.getSystemManager().getSystem<ForceAndTorqueAccumulatorSystem>().Update(fixedDeltaTime);
 		world.getSystemManager().getSystem<RigidBodySystem>().Update(fixedDeltaTime);
-
-		// Physics Solvers
-
-		world.getSystemManager().getSystem<SphereContactGeneratorSystem>().Update(fixedDeltaTime);
-		world.getSystemManager().getSystem<CableComponentSystem>().Update(fixedDeltaTime);
-		world.getSystemManager().getSystem<RodSystem>().Update(fixedDeltaTime);
-		world.getSystemManager().getSystem<ParticleContactResolutionSystem>().Update(fixedDeltaTime);
 
 		// Rendering Update
 		world.getSystemManager().getSystem<DynamicDirectionalLightSystem>().Update(deltaTime);
 		world.getSystemManager().getSystem<DynamicPointLightSystem>().Update(deltaTime);
 		world.getSystemManager().getSystem<DynamicSpotLightSystem>().Update(deltaTime);
-		world.getSystemManager().getSystem<RenderingSystem>().Update(deltaTime);
 		world.getSystemManager().getSystem<RenderingSystemV2>().Update(deltaTime);
 
 		elapsedDeltaTime = glfwGetTime() - time;
 		logicDelta = elapsedDeltaTime - world.data.renderUtil->GetRenderDelta();
 		stepTime = glfwGetTime();
 
-		// Debug
-		if (DEBUG_LOG_LEVEL > 0)
-		{
-			world.data.renderUtil->RenderText("FPS : " + std::to_string((int)round(1.0f / deltaTime)), 1810.0f, 1060.0f, 0.5f, Color(0, 1, 1, 1));
-		}
-		if (DEBUG_LOG_LEVEL > 1)
-		{
-			int logic = (int)round(logicDelta * 100.0f / deltaTime);
-			std::string logicString = logic < 10 ? " " + std::to_string(logic) : std::to_string(logic);
-			int render = (int)round(world.data.renderUtil->GetRenderDelta() * 100.0f / deltaTime);
-			std::string renderString = logic < 10 ? " " + std::to_string(render) : std::to_string(render);
-			int debug = (int)round(debugDelta * 100.0f / deltaTime);
-			std::string debugString = logic < 10 ? " " + std::to_string(debug) : std::to_string(debug);
-			
-			world.data.renderUtil->RenderText("Logic : " + logicString + "%" +
-				//+ " | Physics : " + std::to_string((int)round(physicsDelta * 100.0f / deltaTime)) + "%" +
-				+ " | Rendering : " + renderString + "%" +
-				+ " | Debug : " + debugString + "%"
-				, 1680.0f, 1040.0f, 0.25f, Color(0, 1, 1, 1));
-		}
-		if (DEBUG_LOG_LEVEL > 2)
-		{
-			world.data.renderUtil->RenderText("Draw Calls : " + std::to_string(world.data.renderUtil->GetDrawCalls())
-				+ " | Verts : " + std::to_string(world.data.renderUtil->GetVerts())
-				+ " | Tris : " + std::to_string(world.data.renderUtil->GetTris())
-				+ " | Lines : " + std::to_string(world.data.renderUtil->GetLines())
-				, 1610.0f, 1020.0f, 0.25f, Color(0, 1, 1, 1));
-		}
-
+		RenderStats(world, deltaTime, logicDelta, debugDelta);
 		// Update debug delta
 		debugDelta = glfwGetTime() - stepTime;
 		stepTime = glfwGetTime();
-
 		world.data.renderUtil->SwapBuffers(world.data.renderUtil->window->glfwWindow);
-
-		// Show FPS in console
-		//std::cout << "FPS : " << 1.0f / deltaTime << std::endl;
 	}
 
 	// glfw: terminate, clearing all previously allocated GLFW resources.
@@ -229,83 +188,109 @@ int main()
 	return 0;
 }
 
+void RenderStats(ECSWorld& world, float deltaTime, float logicDelta, float debugDelta) {
+	// Debug
+	if (DEBUG_LOG_LEVEL > 0)
+	{
+		world.data.renderUtil->RenderText("FPS : " + std::to_string((int)round(1.0f / deltaTime)), 1810.0f, 1060.0f, 0.5f, Color(0, 1, 1, 1));
+	}
+	if (DEBUG_LOG_LEVEL > 1)
+	{
+		int logic = (int)round(logicDelta * 100.0f / deltaTime);
+		std::string logicString = logic < 10 ? " " + std::to_string(logic) : std::to_string(logic);
+		int render = (int)round(world.data.renderUtil->GetRenderDelta() * 100.0f / deltaTime);
+		std::string renderString = logic < 10 ? " " + std::to_string(render) : std::to_string(render);
+		int debug = (int)round(debugDelta * 100.0f / deltaTime);
+		std::string debugString = logic < 10 ? " " + std::to_string(debug) : std::to_string(debug);
+
+		world.data.renderUtil->RenderText("Logic : " + logicString + "%" +
+			//+ " | Physics : " + std::to_string((int)round(physicsDelta * 100.0f / deltaTime)) + "%" +
+			+" | Rendering : " + renderString + "%" +
+			+" | Debug : " + debugString + "%"
+			, 1680.0f, 1040.0f, 0.25f, Color(0, 1, 1, 1));
+	}
+	if (DEBUG_LOG_LEVEL > 2)
+	{
+		world.data.renderUtil->RenderText("Draw Calls : " + std::to_string(world.data.renderUtil->GetDrawCalls())
+			+ " | Verts : " + std::to_string(world.data.renderUtil->GetVerts())
+			+ " | Tris : " + std::to_string(world.data.renderUtil->GetTris())
+			+ " | Lines : " + std::to_string(world.data.renderUtil->GetLines())
+			, 1610.0f, 1020.0f, 0.25f, Color(0, 1, 1, 1));
+	}
+}
+
 void LoadShaders(ECSWorld& world)
 {
 	world.data.assetLoader->StartShaderLoading({ {"Shaders/Lighting_Maps.vs", "Shaders/Lighting_Maps.fs"} });
 	world.data.assetLoader->StartShaderLoading({ {"Shaders/vertexDefault.vs", "Shaders/FragmentConstant.fs"} });
 	world.data.assetLoader->StartShaderLoading({ {"Shaders/VertexBuoyancy.vs", "Shaders/FragmentBuoyancy.fs"} });
 }
+
 void LoadModels(ECSWorld& world)
 {
 	world.data.assetLoader->StartModelLoading({
-		ModelData("Resources/Models/kapal.fbx")
+		ModelData("Resources/Models/kapal.fbx",
+			{{"castle.png"}})
 		});
 }
 
 void MakeFlight(ECSWorld& world)
 {
-	auto e = world.createEntity();
+	auto boat = world.createEntity();
 	glm::vec3 rotationInRads = glm::vec3(glm::radians(-90.0f),
 		glm::radians(180.0f), glm::radians(0.0f));
 	Quaternion orientation = glm::quat(rotationInRads);
-	e.addComponent<TransformComponentV2>(Vector3(0, 350.0f, 0), Vector3(5, 5, 5));
+	boat.addComponent<TransformComponentV2>(Vector3(0, 0, 0), Vector3(5, 5, 5));
 	// Add mesh
-	e.addComponent<ModelComponent>("Resources/Models/kapal.fbx", Vector3(0, 0, 2.5f), Vector3(-90, 0, 0));
-	e.addComponent<RigidBodyComponent>(10.0f ,0.3f, 0.5f);
-	e.addComponent<FlighSimulatorComponent>();
-	e.addComponent<FollowCameraComponent>(Vector3(0.0f, 15.0f, 40.0f));
-	e.addComponent<CameraLookComponent>();
-	e.addComponent<InfiniteSpawnTargetComponent>();
-
-	std::vector<int> p1 { GLFW_KEY_E };
-	std::vector<int> n1 { GLFW_KEY_Q };
-	//Right Wing
-	auto RW = world.createEntity();
-	RW.addComponent<AeroControlComponent>(p1, n1);
-	RW.addComponent<AeroMinMaxComponent>(Mat3(0, 0, 0, 0, 0.000f, 0, 0, -0.0005f, 0),
-		Mat3(0, 0, 0, 0, 0, 0, 0, 0, 0),
-		Mat3(0, 0, 0, 0, -0.000f, 0, 0, 0.0005f, 0));
-	RW.addComponent<AeroComponent>(e, Mat3(1.0f), Vector3(100.0f, 0, 50.0f));
-
-	//Left Wing
-	auto LW = world.createEntity();
-	LW.addComponent<AeroControlComponent>(n1, p1);
-	LW.addComponent<AeroMinMaxComponent>(Mat3(0, 0, 0, 0, 0.000f, 0, 0, -0.0005f, 0),
-		Mat3(0, 0, 0, 0, 0, 0, 0, 0, 0),
-		Mat3(0, 0, 0, 0, -0.000f, 0, 0, 0.0005f, 0));
-	LW.addComponent<AeroComponent>(e, Mat3(1.0f), Vector3(-100.0f, 0, 50.0f));
+	boat.addComponent<ModelComponent>("Resources/Models/kapal.fbx", Vector3(0, 1.0f, 2.0f), Vector3(-90, 0, 0));
+	boat.addComponent<RigidBodyComponent>(10.0f ,0.3f, 0.5f);
+	boat.addComponent<FlighSimulatorComponent>();
+	boat.addComponent<FollowCameraComponent>(Vector3(0.0f, 15.0f, 40.0f));
+	boat.addComponent<CameraLookComponent>();
+	boat.addComponent<InfiniteSpawnTargetComponent>();
+	boat.addComponent<BuoyancyComponent>(Vector4(0.0f,0.0f,0.001f,0.0f), 0.0f,-10000.0f);
 
 	//Rudder 
 	std::vector<int> pR = { GLFW_KEY_A };
 	std::vector<int> nR = { GLFW_KEY_D };
 	auto R = world.createEntity();
-	R.addComponent<AeroControlComponent>(pR, nR);
-	R.addComponent<AeroMinMaxComponent>(Mat3(0, 0, 0, 0, 0, 0, 0.002f, 0, 0),
-		Mat3(0, 0, 0, 0, 0, 0, 0.00f, 0, 0),
-		Mat3(0, 0, 0, 0, 0, 0, -0.002f, 0, 0));
-	R.addComponent<AeroComponent>(e, Mat3(1.0f), Vector3(0, 0, -200.0f));
+	// Controls
+	R.addComponent<AeroControlComponent>(pR, nR, 0.5);
+	// Max/Min Tensors
+	R.addComponent<AeroMinMaxComponent>
+		( /* Min Tensor */
+		  Mat3(0,      0, 0, 
+			   0,      0, 0, 
+			   0.002f, 0, 0),
+		  /* Base Tensor */
+		  Mat3(0, 0, 0, 
+			   0, 0, 0, 
+			   0, 0, 0),
+		  /* Max Tensor */
+		  Mat3(0,       0, 0, 
+			   0,       0, 0, 
+			   -0.002f, 0, 0));
 
-	//Back Wing
-	std::vector<int> p2{ GLFW_KEY_W };
-	std::vector<int> n2{ GLFW_KEY_S };
-	auto RW2 = world.createEntity();
-	RW2.addComponent<AeroControlComponent>(p2, n2);
-	RW2.addComponent<AeroMinMaxComponent>(Mat3(0, 0, 0, 0, 0, 0, 0, -0.0015f, 0),
-		Mat3(0, 0, 0, 0, 0, 0, 0, 0, 0),
-		Mat3(0, 0, 0, 0, 0, 0, 0, 0.0015f, 0));
-	RW2.addComponent<AeroComponent>(e, Mat3(1.0f), Vector3(0.0f, 0, -200.0f));
-	/*
-	for (int i = -40; i <= 40; i++)
+	// Apply Tensors to the boat to control its position
+	R.addComponent<AeroComponent>(boat, Mat3(1.0f), Vector3(0, 0, -200.0f));
+
+	// Creates the "inifinte" channel between buildings
+	int runway = 40;
+	for (int i = -runway; i <= runway; i++)
 	{
+		auto water = world.createEntity();
+		water.addComponent<WaterComponent>(50);
+		water.addComponent<TransformComponentV2>(Vector3(0, 0, 50.0f * i));
+
 		auto buildingR = world.createEntity();
-		buildingR.addComponent<TransformComponentV2>(Vector3(100.0f, 0.0f, 50.0f * i));
+		buildingR.addComponent<TransformComponentV2>(Vector3(200.0f, 0.0f, 50.0f * i));
 		buildingR.addComponent<InfiniteSpawnComponent>(RANDOM_FLOAT(100.0f, 500.0f));
 
 		auto buildingL = world.createEntity();
-		buildingL.addComponent<TransformComponentV2>(Vector3(-100.0f, 0.0f, 50.0f * i));
+		buildingL.addComponent<TransformComponentV2>(Vector3(-200.0f, 0.0f, 50.0f * i));
 		buildingL.addComponent<InfiniteSpawnComponent>(RANDOM_FLOAT(100.0f, 500.0f));
+
 	}
-	*/
 }
 
 void SetupLights(ECSWorld& world)

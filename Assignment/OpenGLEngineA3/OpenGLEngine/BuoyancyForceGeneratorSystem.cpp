@@ -6,9 +6,10 @@ namespace Reality
 	BuoyancyForceGeneratorSystem::BuoyancyForceGeneratorSystem()
 	{
 		requireComponent<BuoyancyComponent>();
-		requireComponent<TransformComponent>();
-		requireComponent<ParticleComponent>();
-		requireComponent<SphereComponent>();
+		requireComponent<TransformComponentV2>();
+		requireComponent<RigidBodyComponent>();
+		localZ[0] = localZ[1] = localZ[2] = localZ[3] = 0.001;
+		localX[0] = localX[1] = localX[2] = localX[3] = 0.001;
 	}
 
 
@@ -17,50 +18,30 @@ namespace Reality
 		for (auto e : getEntities())
 		{
 			auto &buoyancy = e.getComponent<BuoyancyComponent>();
-			auto &particle = e.getComponent<ParticleComponent>();
-			auto &sphere = e.getComponent<SphereComponent>();
-			auto &sphereTransform = e.getComponent<TransformComponent>();
-			auto &vatTransform = buoyancy.vat.getComponent<TransformComponent>();
-			auto &buoyancySpawn = buoyancy.vat.getComponent<BuoyancySpawnComponent>();
+			auto &rigidBody = e.getComponent<RigidBodyComponent>();
+			auto &transform = e.getComponent<TransformComponentV2>();
 
-			Vector3 minSphere = sphereTransform.position - 0.5f*sphereTransform.scale;
-			Vector3 maxSphere = sphereTransform.position + 0.5f*sphereTransform.scale;
+			float immersedHeight = buoyancy.liquidHeight - (transform.GetPosition().y - transform.GetScale().y / 2);
+			float immersedVolume = transform.GetScale().x * transform.GetScale().z * immersedHeight;
+			
+			Vector3 rbc = transform.LocalToWorldPosition(buoyancy.centerOfBuoyancy);
+			Vector3 finalForce = immersedVolume * buoyancy.liquidDensity * Vector3(0, 1, 0);
+			rigidBody.AddForceAtPoint(finalForce * rigidBody.gravityScale / rigidBody.inverseMass,
+				Vector3(rbc.x,rbc.y,rbc.z), transform.GetPosition());
 
-			Vector3 minVat = vatTransform.position - 0.5f*vatTransform.scale;
-			Vector3 maxVat = vatTransform.position + 0.5f*vatTransform.scale;
+			// Calculate the next one
+			float cRX = transform.GetRotation().x;
+			float lbcz = -(0.001f) * cRX / (PI / 3);
+			localZ[pointer % 4] = lbcz;
 
-			// Verifies "immersion" between vat and sphere
-			if (minSphere.x > minVat.x && maxSphere.x < maxVat.x
-				&& minSphere.z > minVat.z && maxSphere.z < maxVat.z) {
-				// Now it is just a matter of verifying the y
-				buoyancy.liquidHeight = maxVat.y;
+			float cRZ = transform.GetRotation().z;
+			float lbcx = -(0.001f) * cRZ/ (PI / 3);
+			localX[pointer % 4] = lbcx;
 
-				std::string VatHeight = std::to_string(maxVat.y);
-				std::string SphereHeight = std::to_string(minSphere.y);
 
-				getWorld().data.renderUtil->RenderText("Current sphere: " + SphereHeight + " current vat: " + VatHeight, 1620.0f, 980.0f, 0.25f, Color(0, 1, 1, 1));
+			pointer++;
+			buoyancy.centerOfBuoyancy = Vector4(0, localX[pointer % 4], localZ[pointer % 4], 0);
 
-				// hasn't touched the liquid yet
-				if (minSphere.y >= maxVat.y)
-					return;
-				float immersedVolume = 0.0;
-				if (minSphere.y < maxVat.y && maxSphere.y > maxVat.y) {
-					// Partially immersed from the Top
-					float h = maxSphere.y - maxVat.y;
-					immersedVolume = (PI * pow(h, 2.0f) * (3 * sphere.radius - h)) / 3.0f;
-				}
-				else if (maxSphere.y < maxVat.y && minSphere.y > minVat.y)
-				{
-					// Fully immersed
-					immersedVolume = (4.0f * PI * pow(sphere.radius,3.0f))/3.0f;
-				}
-				else if (minSphere.y < minVat.y && maxSphere.y > minVat.y) {
-					// Partially immersed from the Bottom
-					float h = maxSphere.y - minVat.y;
-					immersedVolume = (PI * pow(h, 2.0f) * (3 * sphere.radius - h)) / 3.0f;
-				}
-				particle.AddForce(immersedVolume * buoyancySpawn.liquidDensity * Vector3(0, 1, 0));
-			}
 		}
 	}
 }
