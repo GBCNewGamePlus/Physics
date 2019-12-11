@@ -53,7 +53,7 @@ namespace Reality
 			}
 			
 			Vector3 normal = (glm::normalize(cable.entityB.getComponent<TransformComponentV2>().GetPosition() -
-				cable.entityA.getComponent<TransformComponentV2>().GetPosition()));
+				cable.entityA.getComponent<TransformComponentV2>().GetPosition()))*-1.0f;
 
 			float penetration = length - cable.maxLength;
 
