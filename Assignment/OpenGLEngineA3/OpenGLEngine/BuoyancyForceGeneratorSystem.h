@@ -10,6 +10,7 @@ namespace Reality
 	{
 	private:
 		float localZ[4];
+		float localX[4];
 		int pointer = 0;
 	public:
 		BuoyancyForceGeneratorSystem();

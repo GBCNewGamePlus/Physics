@@ -9,6 +9,7 @@ namespace Reality
 		requireComponent<TransformComponentV2>();
 		requireComponent<RigidBodyComponent>();
 		localZ[0] = localZ[1] = localZ[2] = localZ[3] = 0.001;
+		localX[0] = localX[1] = localX[2] = localX[3] = 0.001;
 	}
 
 
@@ -32,8 +33,14 @@ namespace Reality
 			float cRX = transform.GetRotation().x;
 			float lbcz = -(0.001f) * cRX / (PI / 3);
 			localZ[pointer % 4] = lbcz;
+
+			float cRZ = transform.GetRotation().z;
+			float lbcx = -(0.001f) * cRZ/ (PI / 3);
+			localX[pointer % 4] = lbcx;
+
+
 			pointer++;
-			buoyancy.centerOfBuoyancy = Vector4(0, 0, localZ[pointer % 4], 0);
+			buoyancy.centerOfBuoyancy = Vector4(0, localX[pointer % 4], localZ[pointer % 4], 0);
 
 		}
 	}
