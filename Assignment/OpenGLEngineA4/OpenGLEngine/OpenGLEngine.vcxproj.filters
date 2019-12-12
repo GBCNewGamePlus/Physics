@@ -482,7 +482,7 @@
     <ClInclude Include="RigidbodyGravityForceGeneratorSystem.h">
       <Filter>Physics\Rigidbody</Filter>
     </ClInclude>
-    <ClInclude Include="Joint.h">
+    <ClInclude Include="JointComponent.h">
       <Filter>TestCS</Filter>
     </ClInclude>
   </ItemGroup>

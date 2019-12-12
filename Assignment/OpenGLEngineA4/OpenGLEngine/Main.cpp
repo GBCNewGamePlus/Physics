@@ -13,7 +13,6 @@
 #include "SphereContactGeneratorSystem.h"
 #include "ParticleContactResolutionSystem.h"
 #include "CableComponentSystem.h"
-#include "Joint.h"
 #include "RodSystem.h"
 #include "ForceAndTorqueAccumulatorSystem.h"
 #include "RigidBodySystem.h"
@@ -36,6 +35,10 @@
 #include "AeroSystem.h"
 #include "CameraLookSystem.h"
 #include "LifeTimeSystem.h"
+
+/* Ragdoll exclusive */
+#include "JointComponent.h"
+
 #include <string>
 #include <stdlib.h>     
 #include <time.h>      
@@ -46,13 +49,7 @@ using namespace Reality;
 
 void LoadShaders(ECSWorld& world);
 void LoadModels(ECSWorld& world);
-void MakeABunchaObjects(ECSWorld& world);
-void MakeABunchaSprings(ECSWorld& world);
-void MakeABunchaSpheres(ECSWorld& world);
-void MakeACable(ECSWorld& world);
-void MakeCablesAndRods(ECSWorld& world);
-void MakeFlight(ECSWorld& world);
-void TestContacts(ECSWorld& world);
+void BuildRagdoll(ECSWorld& world);
 void BuildFloor(ECSWorld& world);
 void SetupLights(ECSWorld& world);
 
@@ -72,21 +69,9 @@ int main()
 	auto e = world.createEntity();
 	e.addComponent<FPSControlComponent>();
 
-	//auto wall = world.createEntity();
-	//wall.addComponent<TransformComponent>(Vector3(0, -3.0f, 0.0f), Vector3(0.1f, 0.1f, 0.1f), Vector3(0, 270, 0));
-	//// Add mesh
-	//wall.addComponent<ModelComponent>("Resources/Models/Sponza-master/sponza.obj");
-
 	SetupLights(world);
-	MakeABunchaObjects(world);
-	//MakeABunchaSpheres(world);
-	//MakeABunchaSprings(world);
-	//MakeACable(world);
-	//akeCablesAndRods(world);
-	//MakeFlight(world);
-	//TestContacts(world);
+	BuildRagdoll(world);
 	BuildFloor(world);
-
 
 	// Create Systems
 	world.getSystemManager().addSystem<UpdateTransformMatricesSystem>();
@@ -128,7 +113,6 @@ int main()
 	world.getSystemManager().addSystem<SphereColliderSystem>(rp3dWorld);
 	world.getSystemManager().addSystem<BoxColliderSystem>(rp3dWorld);
 	world.getSystemManager().addSystem<RigidbodyGravityForceGeneratorSystem>();
-
 
 	float time = glfwGetTime();
 	float stepTime = glfwGetTime();
@@ -201,7 +185,7 @@ int main()
 		world.getSystemManager().getSystem<ForceAccumulatorSystem>().Update(fixedDeltaTime);
 		world.getSystemManager().getSystem<ParticleSystem>().Update(fixedDeltaTime);
 		// Rigiidbody Force Generators and collisions
-		world.getSystemManager().getSystem<RigidbodyGravityForceGeneratorSystem>().Update(fixedDeltaTime);
+		//world.getSystemManager().getSystem<RigidbodyGravityForceGeneratorSystem>().Update(fixedDeltaTime);
 		world.getSystemManager().getSystem<ForceAndTorqueAccumulatorSystem>().Update(fixedDeltaTime);
 		world.getSystemManager().getSystem<RigidBodySystem>().Update(fixedDeltaTime);
 		world.getSystemManager().getSystem<SphereColliderSystem>().Update(fixedDeltaTime);
@@ -278,308 +262,129 @@ void LoadShaders(ECSWorld& world)
 void LoadModels(ECSWorld& world)
 {
 	world.data.assetLoader->StartModelLoading({
-		//ModelData("Resources/Models/snowy-mountain-terrain/SnowyMountainMesh.obj"),
-		//ModelData("Resources/Models/Sponza-master/sponza.obj"),
-		//ModelData("Resources/Models/nanosuit/nanosuit.obj"),*/
 		ModelData("Resources/Models/supermarine-spitfire/spitfire.fbx",
 			{{"spitfire_d.png"}})
 		});
 }
 
-void MakeABunchaObjects(ECSWorld& world)
+enum BodyPart {
+	LeftFoot,
+	RightFoot,
+	LeftLeg,
+	RightLeg,
+	Hip,
+	Abs,
+	Chest,
+	LeftArm,
+	RightArm,
+	LeftForearm,
+	RightForearm,
+	Head,
+	Nothing = -1
+};
+
+void BuildRagdoll(ECSWorld& world)
 {
-	Vector3 tempPos[12] = {Vector3 (0.7f, 1.7f, 1), Vector3 (4.1f, 1.7f, 1), Vector3 (0.7f, 5.4f, 1), Vector3 (4.1f, 5.4f, 1),
-						   Vector3 (2.4f, 8.6f, 1), Vector3 (2.4f, 10.3f, 1), Vector3 (2.4f, 12.5f, 1), Vector3 (-1.5f, 13, 1),
-						   Vector3 (6.1f, 13, 1), Vector3 (-4.2f, 13, 1), Vector3 (8.8f, 13, 1), Vector3 (2.4f, 15.2f, 1)};
-	Vector3 tempSize[12] = { Vector3 (1,3,1), Vector3 (1,3,1), Vector3(1,4,1), Vector3(1,4,1),
-							 Vector3 (4,2,1), Vector3 (2,1,1), Vector3(4,2,1), Vector3(3,1,1),
-							 Vector3 (3,1,1), Vector3 (2,1,1), Vector3(2,1,1), Vector3(2,2,1)};
-	int connect[12][4] = { {2,-1,-1,-1}, {3,-1,-1,-1}, {0, 4,-1,-1}, {1, 4,-1,-1},
-						  {2, 3, 5,-1}, {4, 6,-1,-1}, {5, 7,11, 8}, {9, 6,-1,-1},
-						  {6,10,-1,-1}, {7,-1,-1,-1}, {8,-1,-1,-1}, {6,-1,-1,-1} };
-	Vector3 bones[12][4] = { /*0*/ {Vector3(0.0f,1.5,0.0f),Vector3(0,0,0),Vector3(0,0,0),Vector3(0,0,0)}, //LOCAL POSITION OF ALL BONE JOINTS
-							 /*1*/ {Vector3(0.0f,1.5f,0.0f),Vector3(0,0,0),Vector3(0,0,0),Vector3(0,0,0)},
-							 /*2*/ {Vector3(0,-2,0),Vector3(0,2,0),Vector3(0,0,0),Vector3(0,0,0)},
-							 /*3*/ {Vector3(0,-2,0),Vector3(0,2,0),Vector3(0,0,0),Vector3(0,0,0)},
-							 /*4*/ {Vector3(-1,-1,0),Vector3(1,-1,0),Vector3(0,1,0),Vector3(0,0,0)},
-							 /*5*/ {Vector3(0,-1,0),Vector3(0,1,0),Vector3(0,0,0),Vector3(0,0,0)},
-							 /*6*/ {Vector3(0,-1,0),Vector3(-2,0.5f,0),Vector3(2,0.5f,0),Vector3(0,1,0)},
-							 /*7*/ {Vector3(-1.5f,0,0),Vector3(1.5f,0,0),Vector3(0,0,0),Vector3(0,0,0)},
-							 /*8*/ {Vector3(-1.5f,0,0),Vector3(1.5f,0,0),Vector3(0,0,0),Vector3(0,0,0)},
-							 /*9*/ {Vector3(1.0f,0,0),Vector3(0,0,0),Vector3(0,0,0),Vector3(0,0,0)},
-							 /*10*/ {Vector3(-1.0f,0,0),Vector3(0,0,0),Vector3(0,0,0),Vector3(0,0,0)},
-							 /*11*/ {Vector3(0,-1.0f,0),Vector3(0,0,0),Vector3(0,0,0),Vector3(0,0,0)},
+	// Bodyparts -> from the perspective of who looks at them
+	Vector3 bodyPartPosition[12] = {
+		Vector3 ( 0.7f,  1.7f, 1), /* Left Foot     */
+		Vector3 ( 4.1f,  1.7f, 1), /* Right Foot    */
+		Vector3 ( 0.7f,  5.4f, 1), /* Left Leg      */
+		Vector3 ( 4.1f,  5.4f, 1), /* Right Leg     */
+		Vector3 ( 2.4f,  8.6f, 1), /* Hip           */
+		Vector3 ( 2.4f, 10.3f, 1), /* Abs           */
+		Vector3 ( 2.4f, 12.5f, 1), /* Chest         */
+		Vector3 (-1.5f, 13,    1), /* Left Arm      */
+		Vector3 ( 6.1f, 13,    1), /* Right Arm     */
+		Vector3 (-4.2f, 13,    1), /* Left Forearm  */
+		Vector3 ( 8.8f, 13,    1), /* Right Forearm */
+		Vector3 ( 2.4f, 15.2f, 1)  /* Head          */};
+	Vector3 bodyPartScale[12] = { 
+		Vector3 (1,3,1) /* Left Foot     */,
+		Vector3 (1,3,1) /* Right Foot    */,
+		Vector3 (1,4,1) /* Left Leg      */,
+		Vector3 (1,4,1) /* Right Leg     */,
+		Vector3 (4,2,1) /* Hip           */,
+		Vector3 (2,1,1) /* Abs           */,
+		Vector3 (4,2,1) /* Chest         */,
+		Vector3 (3,1,1) /* Left Arm      */,
+		Vector3 (3,1,1) /* Right Arm     */,
+		Vector3 (2,1,1) /* Left Forearm  */,
+		Vector3 (2,1,1) /* Right Forearm */,
+		Vector3 (2,2,1) /* Head          */ };
+	
+	int limbToLimb[12][4] = {
+		/* -1 means no connection */
+		/* Left Foot     */ {LeftLeg,      Nothing,      Nothing, Nothing  },
+		/* Right Foot    */ {RightLeg,     Nothing,      Nothing, Nothing  },
+		/* Left Ankle    */ {LeftFoot,     Hip,          Nothing, Nothing  },
+		/* Right Ankle   */ {LeftFoot,     Hip,          Nothing, Nothing  },
+		/* Hip           */ {LeftLeg,      RightLeg,     Abs,     Nothing  },
+		/* Abs           */ {Hip,          Chest,        Nothing, Nothing  },
+		/* Chest         */ {Abs,          LeftArm,      Head,    RightArm },
+		/* Left Arm      */ {LeftForearm,  Chest,        Nothing, Nothing  },
+		/* Right Arm     */ {Chest,        RightForearm, Nothing, Nothing  },
+		/* Left Forearm  */ {LeftArm,      Nothing,      Nothing, Nothing  },
+		/* Right Forearm */ {RightArm,     Nothing,      Nothing, Nothing  },
+		/* Head          */ {Chest,        Nothing,      Nothing, Nothing  }
 	};
-	Mix::Entity temp[12];
-	for (int i = 0; i < 12; i++)
+
+	Vector3 sockets[12][4] = { 
+		// Local position of all sockets to get the bones through and connect the limbs
+		// (0,0,0) is an invalid socket
+		/* Left Foot     */ {Vector3(0.0f,1.5,0.0f) , Vector3(0,0,0),     Vector3(0,0,0),    Vector3(0,0,0)},
+		/* Right Foot    */ {Vector3(0.0f,1.5f,0.0f), Vector3(0,0,0),     Vector3(0,0,0),    Vector3(0,0,0)},
+		/* Left Ankle    */ {Vector3(0,-2,0),         Vector3(0,2,0),     Vector3(0,0,0),    Vector3(0,0,0)},
+		/* Right Ankle   */ {Vector3(0,-2,0),         Vector3(0,2,0),     Vector3(0,0,0),    Vector3(0,0,0)},
+		/* Hip           */ {Vector3(-1,-1,0),        Vector3(1,-1,0),    Vector3(0,1,0),    Vector3(0,0,0)},
+		/* Abs           */ {Vector3(0,-1,0),         Vector3(0,1,0),     Vector3(0,0,0),    Vector3(0,0,0)},
+		/* Chest         */ {Vector3(0,-1,0),         Vector3(-2,0.5f,0), Vector3(2,0.5f,0), Vector3(0,1,0)},
+		/* Left Arm      */ {Vector3(-1.5f,0,0),      Vector3(1.5f,0,0),  Vector3(0,0,0),    Vector3(0,0,0)},
+		/* Right Arm     */ {Vector3(-1.5f,0,0),      Vector3(1.5f,0,0),  Vector3(0,0,0),    Vector3(0,0,0)},
+		/* Left Forearm  */ {Vector3(1.0f,0,0),       Vector3(0,0,0),     Vector3(0,0,0),    Vector3(0,0,0)},
+		/* Right Forearm */ {Vector3(-1.0f,0,0),      Vector3(0,0,0),     Vector3(0,0,0),    Vector3(0,0,0)},
+		/* Head          */ {Vector3(0,-1.0f,0),      Vector3(0,0,0),     Vector3(0,0,0),    Vector3(0,0,0)},
+	};
+	ECSEntity limbList[12];
+	int joints = 0;
+	for (int limbIterator = LeftFoot; limbIterator <= Head; limbIterator++)
 	{
-		auto object2 = world.createEntity();
-		object2.addComponent<TransformComponentV2>(tempPos[i], tempSize[i], Vector3(0,0,0));
-		object2.addComponent<RigidBodyComponent>(10.0f, 0.1f, 0.1f, Vector3(0, 0, 0), Vector3(0, 0, 0), 5);
-		int tempNum = 0;
-		for (int j = 0; j < 4; j++) {
-			if (bones[i][j] != Vector3(0, 0, 0)) {
-				tempNum++;
+		auto limb = world.createEntity();
+		limb.addComponent<TransformComponentV2>(bodyPartPosition[limbIterator], bodyPartScale[limbIterator], Vector3(0,0,0));
+		limb.addComponent<RigidBodyComponent>(10.0f, 0.1f, 0.1f, Vector3(0, 0, 0), Vector3(0, 0, 0), 5);
+		auto limbCollider = world.createEntity();
+		limbCollider.addComponent<BoxColliderComponent>(limb, bodyPartScale[limbIterator]);
+		limbList[limbIterator] = limb;
+		// Creating joints without cannabis
+		for (int jointIterator = 0; jointIterator < 4; jointIterator++) {
+			int* limbJoints = limbToLimb[limbIterator];
+			if (limbJoints[jointIterator] > Nothing
+				&& limbJoints[jointIterator] < limbIterator)
+			{
+				// We can make a joint!!!
+				auto limbSocket = sockets[limbIterator][jointIterator];
+				int theOtherLimbIdx = limbJoints[jointIterator];
+				auto theOtherLimb = limbList[theOtherLimbIdx];
+				int* otherLimbJoints = limbToLimb[theOtherLimbIdx];
+				int otherJointIterator = 0;
+				for (;otherJointIterator < 4; otherJointIterator++) {
+					if (otherLimbJoints[otherJointIterator] == limbIterator) {
+						break;
+					}
+				}
+				auto theOtherLimbSocket = sockets[theOtherLimbIdx][otherJointIterator];
+				auto joint = world.createEntity();
+				joint.addComponent<JointComponent>(
+					limb,               // The current Limb
+					limbSocket,         // The current Limb Socket
+					theOtherLimb,		// The referenced limb
+					theOtherLimbSocket,	// The refedenced limb socket of choice
+					0.1f // Cut some slack
+					);
+				joints++;
 			}
 		}
-		object2.addComponent<Joint>(bones[i][0], bones[i][1], bones[i][2], bones[i][3], tempNum);
-		temp[i] = object2;
-		auto objectCol2 = world.createEntity();
-		objectCol2.addComponent<BoxColliderComponent>(object2, tempSize[i]);
 	}
-	for (int i = 0; i < 12; i++)
-	{
-	
-		for (int j = 0; j < 4; j++) {
-			if (connect[i][j] != -1) {
-				auto e = world.createEntity();
-				e.addComponent<CableComponent>(temp[i], temp[connect[i][j]], 0.5, 100);
-			}
-			
-		}
-		
-	}
-	
-}
-
-void MakeABunchaSprings(ECSWorld& world)
-{
-	auto e = world.createEntity();
-	float yOffset = 30;
-	e.addComponent<TransformComponent>(Vector3(-2.5f, -5 + yOffset, -3), Vector3(1.0f, 1.0f, 1.0f));
-	e.addComponent<ParticleComponent>();
-	// Add mesh
-	e.addComponent<ModelComponent>("Resources/Models/nanosuit/nanosuit.obj");
-
-	auto springEntinty = world.createEntity();
-	springEntinty.addComponent<TransformComponent>(Vector3(-2.5f, 0 + yOffset, 3));
-	springEntinty.addComponent<FixedSpringComponent>(8, 2, e);
-
-	auto e2 = world.createEntity();
-	e2.addComponent<TransformComponent>(Vector3(2.5f, -5 + yOffset, -1), Vector3(1.0f, 1.0f, 1.0f));
-	e2.addComponent<ParticleComponent>();
-	// Add mesh
-	e2.addComponent<ModelComponent>("Resources/Models/nanosuit/nanosuit.obj");
-
-	auto springEntinty2 = world.createEntity();
-	springEntinty2.addComponent<TransformComponent>(Vector3(2.5f, 0 + yOffset, 1));
-	springEntinty2.addComponent<FixedSpringComponent>(5, 5, e2);
-
-	auto pairedSpring = world.createEntity();
-	pairedSpring.addComponent<PairedSpringComponent>(100, 5.0f, e, e2);
-
-	auto e3 = world.createEntity();
-	e3.addComponent<TransformComponent>(Vector3(-7.5f, -7.5f + yOffset, 1), Vector3(1.0f, 1.0f, 1.0f));
-	e3.addComponent<ParticleComponent>();
-	// Add mesh
-	e3.addComponent<ModelComponent>("Resources/Models/nanosuit/nanosuit.obj");
-
-	auto springEntinty3 = world.createEntity();
-	springEntinty3.addComponent<TransformComponent>(Vector3(-7.5f, -10 + yOffset, -1));
-	springEntinty3.addComponent<FixedSpringComponent>(7, 7, e3);
-
-	auto e4 = world.createEntity();
-	e4.addComponent<TransformComponent>(Vector3(7.5f, -7.5f + yOffset, 3), Vector3(1.0f, 1.0f, 1.0f));
-	e4.addComponent<ParticleComponent>();
-	// Add mesh
-	e4.addComponent<ModelComponent>("Resources/Models/nanosuit/nanosuit.obj");
-
-	auto springEntinty4 = world.createEntity();
-	springEntinty4.addComponent<TransformComponent>(Vector3(7.5f, -10 + yOffset, -3));
-	springEntinty4.addComponent<FixedSpringComponent>(5, 0, e4);
-
-	auto pairedSpring2 = world.createEntity();
-	pairedSpring2.addComponent<PairedSpringComponent>(100, 5.2f, e, e3);
-
-	auto pairedSpring3 = world.createEntity();
-	pairedSpring3.addComponent<PairedSpringComponent>(100, 5.2f, e2, e4);
-
-	auto pairedSpring4 = world.createEntity();
-	pairedSpring4.addComponent<PairedSpringComponent>(100, 10.0f, e3, e4);
-}
-
-void MakeABunchaSpheres(ECSWorld& world)
-{
-	for (int i = 0; i < 30; i++)
-	{
-		auto e = world.createEntity();
-		//e.addComponent<TransformComponent>(Vector3(RANDOM_FLOAT(-1, 1), 20,0));
-
-		e.addComponent<TransformComponent>(Vector3(RANDOM_FLOAT(-15.0f, 15.0f), RANDOM_FLOAT(6.0f, 34.0f), RANDOM_FLOAT(-15.0f, 15.0f)));
-		e.addComponent<ParticleComponent>(1, Vector3(RANDOM_FLOAT(-5, 5), RANDOM_FLOAT(-5, 5), RANDOM_FLOAT(-5, 5)));
-		e.addComponent<SphereComponent>(1);
-		Color col = Color(0, RANDOM_FLOAT(0.0f, 1.0f), RANDOM_FLOAT(0.0f, 1.0f));
-		//e.addComponent<DynamicPointLightComponent>(20.0f, col, col, col);
-	}
-
-	auto ref = world.createEntity();
-	ref.addComponent<TransformComponent>(Vector3(0, 20, 0), Vector3(0.3f, 0.3f, 0.3f), Vector3(0, 180, 0));
-	// Add mesh
-	ref.addComponent<ModelComponent>("Resources/Models/nanosuit/nanosuit.obj");
-	ref.addComponent<RotateComponent>(0, 40, 0);
-}
-
-void MakeACable(ECSWorld& world)
-{
-	auto e1 = world.createEntity();
-	e1.addComponent<TransformComponent>(Vector3(0, 40, 0));
-	//e1.addComponent<ParticleComponent>(1, Vector3(0,0,0), 0);
-
-	auto e2 = world.createEntity();
-	e2.addComponent<TransformComponent>(Vector3(0, 30, 0));
-	e2.addComponent<ParticleComponent>(1);
-	
-	auto e = world.createEntity();
-	e.addComponent<CableComponent>(e1, e2, 20);
-}
-
-void MakeCablesAndRods(ECSWorld& world)
-{
-	auto eFixed = world.createEntity();
-	eFixed.addComponent<TransformComponent>(Vector3(10, 40, 0));
-	//e1.addComponent<ParticleComponent>(1, Vector3(0,0,0), 0);
-
-	auto eFixed2 = world.createEntity();
-	eFixed2.addComponent<TransformComponent>(Vector3(20, 10, 0));
-
-	auto eFixed3 = world.createEntity();
-	eFixed3.addComponent<TransformComponent>(Vector3(-20, 10, 0));
-
-	auto e1 = world.createEntity();
-	e1.addComponent<TransformComponent>(Vector3(0, 30, 0));
-	e1.addComponent<ParticleComponent>(10);
-
-	auto e2 = world.createEntity();
-	e2.addComponent<TransformComponent>(Vector3(-10, 20, 0));
-	e2.addComponent<ParticleComponent>(10);
-
-	auto e3 = world.createEntity();
-	e3.addComponent<TransformComponent>(Vector3(0, 10, 0));
-	e3.addComponent<ParticleComponent>(10);
-
-	auto e4 = world.createEntity();
-	e4.addComponent<TransformComponent>(Vector3(10, 20, 0));
-	e4.addComponent<ParticleComponent>(10);
-
-	auto eCable = world.createEntity();
-	eCable.addComponent<CableComponent>(eFixed, e1, 20);
-
-	auto eCable2 = world.createEntity();
-	eCable2.addComponent<PairedSpringComponent>(1000, 20, eFixed2, e4);
-
-	auto eCable3 = world.createEntity();
-	eCable3.addComponent<PairedSpringComponent>(1000, 20, eFixed3, e2);
-
-	auto eRod1 = world.createEntity();
-	eRod1.addComponent<RodComponent>(e1, e2, 10 * sqrt(2));
-	auto eRod2 = world.createEntity();
-	eRod2.addComponent<RodComponent>(e2, e3, 10 * sqrt(2));
-	auto eRod3 = world.createEntity();
-	eRod3.addComponent<RodComponent>(e3, e4, 10 * sqrt(2));
-	auto eRod4 = world.createEntity();
-	eRod4.addComponent<RodComponent>(e4, e1, 10 * sqrt(2));
-
-	auto eRodDiagonal1 = world.createEntity();
-	eRodDiagonal1.addComponent<RodComponent>(e1, e3, 20);
-	auto eRodDiagonal2 = world.createEntity();
-	eRodDiagonal2.addComponent<RodComponent>(e2, e4, 20);
-}
-
-void MakeFlight(ECSWorld& world)
-{
-	auto e = world.createEntity();
-	glm::vec3 rotationInRads = glm::vec3(glm::radians(-90.0f),
-		glm::radians(180.0f), glm::radians(0.0f));
-	Quaternion orientation = glm::quat(rotationInRads);
-	e.addComponent<TransformComponentV2>(Vector3(0, 350.0f, 0), Vector3(0.10f, 0.1f, 0.1f));
-	// Add mesh
-	e.addComponent<ModelComponent>("Resources/Models/supermarine-spitfire/spitfire.fbx", Vector3(0, -50, 20), Vector3(-90, 0, 0));
-	e.addComponent<RigidBodyComponent>(10.0f ,0.3f, 0.5f);
-	e.addComponent<FlighSimulatorComponent>();
-	e.addComponent<FollowCameraComponent>(Vector3(0.0f, 15.0f, 40.0f));
-	e.addComponent<CameraLookComponent>();
-	e.addComponent<InfiniteSpawnTargetComponent>();
-
-	std::vector<int> p1 { GLFW_KEY_E };
-	std::vector<int> n1 { GLFW_KEY_Q };
-	//Right Wing
-	auto RW = world.createEntity();
-	RW.addComponent<AeroControlComponent>(p1, n1);
-	RW.addComponent<AeroMinMaxComponent>(Mat3(0, 0, 0, 0, 0.000f, 0, 0, -0.0005f, 0),
-		Mat3(0, 0, 0, 0, 0, 0, 0, 0, 0),
-		Mat3(0, 0, 0, 0, -0.000f, 0, 0, 0.0005f, 0));
-	RW.addComponent<AeroComponent>(e, Mat3(1.0f), Vector3(100.0f, 0, 50.0f));
-
-	//Left Wing
-	auto LW = world.createEntity();
-	LW.addComponent<AeroControlComponent>(n1, p1);
-	LW.addComponent<AeroMinMaxComponent>(Mat3(0, 0, 0, 0, 0.000f, 0, 0, -0.0005f, 0),
-		Mat3(0, 0, 0, 0, 0, 0, 0, 0, 0),
-		Mat3(0, 0, 0, 0, -0.000f, 0, 0, 0.0005f, 0));
-	LW.addComponent<AeroComponent>(e, Mat3(1.0f), Vector3(-100.0f, 0, 50.0f));
-
-	//Rudder 
-	std::vector<int> pR = { GLFW_KEY_A };
-	std::vector<int> nR = { GLFW_KEY_D };
-	auto R = world.createEntity();
-	R.addComponent<AeroControlComponent>(pR, nR);
-	R.addComponent<AeroMinMaxComponent>(Mat3(0, 0, 0, 0, 0, 0, 0.002f, 0, 0),
-		Mat3(0, 0, 0, 0, 0, 0, 0.00f, 0, 0),
-		Mat3(0, 0, 0, 0, 0, 0, -0.002f, 0, 0));
-	R.addComponent<AeroComponent>(e, Mat3(1.0f), Vector3(0, 0, -200.0f));
-
-	//Back Wing
-	std::vector<int> p2{ GLFW_KEY_W };
-	std::vector<int> n2{ GLFW_KEY_S };
-	auto RW2 = world.createEntity();
-	RW2.addComponent<AeroControlComponent>(p2, n2);
-	RW2.addComponent<AeroMinMaxComponent>(Mat3(0, 0, 0, 0, 0, 0, 0, -0.0015f, 0),
-		Mat3(0, 0, 0, 0, 0, 0, 0, 0, 0),
-		Mat3(0, 0, 0, 0, 0, 0, 0, 0.0015f, 0));
-	RW2.addComponent<AeroComponent>(e, Mat3(1.0f), Vector3(0.0f, 0, -200.0f));
-
-	for (int i = -40; i <= 40; i++)
-	{
-		auto buildingR = world.createEntity();
-		buildingR.addComponent<TransformComponentV2>(Vector3(100.0f, 0.0f, 50.0f * i));
-		buildingR.addComponent<InfiniteSpawnComponent>(RANDOM_FLOAT(100.0f, 500.0f));
-
-		auto buildingL = world.createEntity();
-		buildingL.addComponent<TransformComponentV2>(Vector3(-100.0f, 0.0f, 50.0f * i));
-		buildingL.addComponent<InfiniteSpawnComponent>(RANDOM_FLOAT(100.0f, 500.0f));
-	}
-}
-
-void TestContacts(ECSWorld& world)
-{
-	for (int i = 0; i < 30; i++)
-	{
-		auto e = world.createEntity();
-		e.addComponent<TransformComponentV2>(Vector3(RANDOM_FLOAT(-200.0f, 200.0f), RANDOM_FLOAT(-200.0f, 200.0f), RANDOM_FLOAT(-200.0f, 200.0f)),
-			Vector3(1, 1, 1),
-			Vector3(RANDOM_FLOAT(-180.0f, 180.0f), RANDOM_FLOAT(-180.0f, 180.0f), RANDOM_FLOAT(-180.0f, 180.0f)));
-		e.addComponent<RigidBodyComponent>();
-		e.addComponent<MoveInBoundsComponent>(Vector3(RANDOM_FLOAT(-10.0f, 10.0f), RANDOM_FLOAT(-10.0f, 10.0f), RANDOM_FLOAT(-10.0f, 10.0f)),
-			Vector3(200, 200, 200));
-		auto col = world.createEntity();
-		if ((RANDOM_FLOAT(0.0f, 1.0f) >= 0.5f))
-		{
-			col.addComponent<SphereColliderComponent>(e, RANDOM_FLOAT(10.0f, 50.0f));
-		}
-		else
-		{
-			col.addComponent<BoxColliderComponent>(e, Vector3(RANDOM_FLOAT(30.0f, 70.0f), RANDOM_FLOAT(30.0f, 70.0f), RANDOM_FLOAT(30.0f, 70.0f)));
-		}
-	}
-	/*for (int i = 0; i < 2; i++)
-	{
-		auto e = world.createEntity();
-		e.addComponent<TransformComponentV2>(Vector3(50 * ( i % 2 == 0 ? -1 : 1), 0, 0));
-		e.addComponent<RigidBodyComponent>();
-		e.addComponent<MoveInBoundsComponent>(Vector3(10 * (i % 2 == 0 ? 1 : -1), 0, 0), Vector3(100, 100, 100));
-		auto col = world.createEntity();
-		col.addComponent<SphereColliderComponent>(e, 30);
-	}*/
 }
 
 void BuildFloor(ECSWorld& world)
@@ -590,23 +395,6 @@ void BuildFloor(ECSWorld& world)
 	floor1.addComponent<RigidBodyComponent>(100000.0f, 0.4f, 0.3f, Vector3(0, 0, 0), Vector3(0, 0, 0), 0);
 	auto floorCol1 = world.createEntity();
 	floorCol1.addComponent<BoxColliderComponent>(floor1, Vector3(1000, 10, 1000));
-
-	// Floor 2
-	/*auto floor2 = world.createEntity();
-	floor2.addComponent<TransformComponentV2>(Vector3(80, -50, 0), Vector3(1, 1, 1), Vector3(0, 0, 30));
-	floor2.addComponent<RigidBodyComponent>(10000.0f, 0.0f, 0.0f, Vector3(0, 0, 0), Vector3(0, 0, 0), 0);
-	auto floorCol2 = world.createEntity();
-	floorCol2.addComponent<BoxColliderComponent>(floor2, Vector3(300, 10, 300));*/
-
-	//// Object 1
-	//auto object1 = world.createEntity();
-	//object1.addComponent<TransformComponentV2>(Vector3(-30, 50, 0));
-	//object1.addComponent<RigidBodyComponent>();
-	//auto objectCol1 = world.createEntity();
-	//objectCol1.addComponent<SphereColliderComponent>(object1, 10);
-
-	// Object 2
-	
 }
 
 void SetupLights(ECSWorld& world)

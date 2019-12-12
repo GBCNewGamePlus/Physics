@@ -360,7 +360,7 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="InputEventSystem.h" />
-    <ClInclude Include="Joint.h" />
+    <ClInclude Include="JointComponent.h" />
     <ClInclude Include="LifeTimeComponent.h">
       <SubType>
       </SubType>
