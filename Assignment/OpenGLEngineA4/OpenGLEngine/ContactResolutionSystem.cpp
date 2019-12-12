@@ -15,7 +15,7 @@ namespace Reality
 		auto contactEvents = getWorld().getEventManager().getEvents<ContactEvent>();
 		for (auto& contact : contactEvents)
 		{
-			ResolvePenetration(contact);
+			//ResolvePenetration(contact);
 			ResolveVelocity(contact);
 		}
 		getWorld().data.renderUtil->RenderText("Num Contacts = " + to_string(contactEvents.size()), 1920 * 0.5f - 100, 1080 * 0.5f, 0.5f, Color::Red);
@@ -58,8 +58,8 @@ namespace Reality
 		totalInertia += angularInertiaB + linearInertiaB;
 
 		// Total Moves
-		float inverseInertia = 1 / totalInertia; 
-		float linearMoveA = contact.penetrationDepth * linearInertiaA * inverseInertia; 
+		float inverseInertia = 1 / totalInertia;
+		float linearMoveA = contact.penetrationDepth * linearInertiaA * inverseInertia;
 		float linearMoveB = -contact.penetrationDepth * linearInertiaB * inverseInertia;
 		float angularMoveA = contact.penetrationDepth * angularInertiaA * inverseInertia;
 		float angularMoveB = -contact.penetrationDepth * angularInertiaB * inverseInertia;
@@ -69,12 +69,13 @@ namespace Reality
 		{
 			float totalMoveA = linearMoveA + angularMoveA;
 			// Set the new angular move, with the same sign as before. 
-			if (angularMoveA >= 0) 
-			{ 
-				angularMoveA = limitA; 
-			} else 
-			{ 
-				angularMoveA = -limitA; 
+			if (angularMoveA >= 0)
+			{
+				angularMoveA = limitA;
+			}
+			else
+			{
+				angularMoveA = -limitA;
 			}
 			// Make the linear move take the extra slack. 
 			linearMoveA = totalMoveA - angularMoveA;
@@ -103,7 +104,7 @@ namespace Reality
 
 		// Update Rotational Moves
 		// A
-		Vector3 impulsiveTorqueA = glm::cross(relativePositionA,  contact.normal); 
+		Vector3 impulsiveTorqueA = glm::cross(relativePositionA, contact.normal);
 		Vector3 impulsePerMoveA = worldInvInertiaTensorA * impulsiveTorqueA;
 
 		Vector3 rotationPerMoveA = impulsePerMoveA * (1 / angularInertiaA);
@@ -140,9 +141,9 @@ namespace Reality
 		Vector3 contactZ;
 		Mat3 contactLocalToWorld = Mat3(1.0f);
 		CalculateContactBasis(contact.normal, contactLocalToWorld, contactY, contactZ);
-		getWorld().data.renderUtil->DrawLine(contactPoint, contactPoint + 5.0f * contact.normal, Color::Red);
-		getWorld().data.renderUtil->DrawLine(contactPoint, contactPoint + 5.0f * contactY, Color::Green);
-		getWorld().data.renderUtil->DrawLine(contactPoint, contactPoint + 5.0f * contactZ, Color::Blue);
+		//getWorld().data.renderUtil->DrawLine(contactPoint, contactPoint + 5.0f * contact.normal, Color::Red);
+		//getWorld().data.renderUtil->DrawLine(contactPoint, contactPoint + 5.0f * contactY, Color::Green);
+		//getWorld().data.renderUtil->DrawLine(contactPoint, contactPoint + 5.0f * contactZ, Color::Blue);
 
 		// Relative Positions
 		Vector3 relativePositionA = contact.worldPoint1 - transformA.GetPosition();
@@ -204,9 +205,9 @@ namespace Reality
 		rbB.angularVelocity += angularVelocityChangeB;
 
 		// Debug Drawing
-		getWorld().data.renderUtil->DrawSphere(contact.worldPoint1, 0.4f, Color::Red);
-		getWorld().data.renderUtil->DrawSphere(contact.worldPoint2, 0.4f, Color::Blue);
-		getWorld().data.renderUtil->DrawLine(contact.worldPoint1, contact.worldPoint2, Color::Beige);
+		//getWorld().data.renderUtil->DrawSphere(contact.worldPoint1, 0.4f, Color::Red);
+		//getWorld().data.renderUtil->DrawSphere(contact.worldPoint2, 0.4f, Color::Blue);
+		//getWorld().data.renderUtil->DrawLine(contact.worldPoint1, contact.worldPoint2, Color::Beige);
 	}
 	void ContactResolutionSystem::CalculateContactBasis(Vector3 contactNormal, Mat3 & transformationMat, Vector3 & y, Vector3 & z)
 	{
@@ -219,7 +220,7 @@ namespace Reality
 		y = glm::normalize(glm::cross(z, contactNormal));
 
 		transformationMat = Mat3(contactNormal.x, contactNormal.y, contactNormal.z,
-									y.x, y.y, y.z,
-									z.x, z.y, z.z);
+			y.x, y.y, y.z,
+			z.x, z.y, z.z);
 	}
 }

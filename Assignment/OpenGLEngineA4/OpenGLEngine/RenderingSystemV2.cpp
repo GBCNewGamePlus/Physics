@@ -32,9 +32,9 @@ namespace Reality
 				Mat4 modelMat = transform.GetTransformationMatrix() * glm::translate(glm::mat4(1.0f), model.offset) * rotationOffsetMat;
 				getWorld().data.renderUtil->DrawModel(model.modelId, modelMat);
 			}
-			getWorld().data.renderUtil->DrawLine(transform.GetPosition(), transform.GetPosition() + transform.Right() * 10.0f, Color::Red);
-			getWorld().data.renderUtil->DrawLine(transform.GetPosition(), transform.GetPosition() + transform.Up() * 10.0f, Color::Green);
-			getWorld().data.renderUtil->DrawLine(transform.GetPosition(), transform.GetPosition() + transform.Forward() * 10.0f, Color::Blue);
+			//getWorld().data.renderUtil->DrawLine(transform.GetPosition(), transform.GetPosition() + transform.Right() * 10.0f, Color::Red);
+			//getWorld().data.renderUtil->DrawLine(transform.GetPosition(), transform.GetPosition() + transform.Up() * 10.0f, Color::Green);
+			//getWorld().data.renderUtil->DrawLine(transform.GetPosition(), transform.GetPosition() + transform.Forward() * 10.0f, Color::Blue);
 		}
 	}
 }

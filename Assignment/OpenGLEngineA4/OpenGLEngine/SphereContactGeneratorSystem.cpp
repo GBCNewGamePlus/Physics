@@ -45,8 +45,8 @@ namespace Reality
 							ECSEntity e = getWorld().createEntity();
 							Vector3 normal = glm::normalize(transform1.position - transform2.position);
 
-							getWorld().data.renderUtil->DrawLine(transform1.position - sphere1.radius * normal,
-								transform1.position - sphere1.radius * normal + penetration * normal, Color(0, 0, 1));
+							//getWorld().data.renderUtil->DrawLine(transform1.position - sphere1.radius * normal,
+							//	transform1.position - sphere1.radius * normal + penetration * normal, Color(0, 0, 1));
 
 							e.addComponent<ParticleContactComponent>(entities[i],
 								entities[j],
@@ -96,7 +96,7 @@ namespace Reality
 				collided = true;
 			}
 			Color col = collided ? Color(1, 0, 0, 1) : Color(0, 1, 0, 1);
-			getWorld().data.renderUtil->DrawSphere(transform1.position, sphere1.radius, col);
+			//getWorld().data.renderUtil->DrawSphere(transform1.position, sphere1.radius, col);
 		}
 		//getWorld().data.renderUtil->DrawCube(Vector3(0, 20, 0), Vector3(30, 30, 30));
 	}

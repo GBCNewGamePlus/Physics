@@ -38,6 +38,7 @@
 
 /* Ragdoll exclusive */
 #include "JointComponent.h"
+#include "JointSystem.h"
 
 #include <string>
 #include <stdlib.h>     
@@ -74,7 +75,6 @@ int main()
 	BuildFloor(world);
 
 	// Create Systems
-	world.getSystemManager().addSystem<UpdateTransformMatricesSystem>();
 	world.getSystemManager().addSystem<RenderingSystem>();
 	world.getSystemManager().addSystem<RenderingSystemV2>();
 	world.getSystemManager().addSystem<InputEventSystem>();
@@ -82,25 +82,14 @@ int main()
 	world.getSystemManager().addSystem<ParticleSystem>();
 	world.getSystemManager().addSystem<ParticleSpawnerSystem>();
 	world.getSystemManager().addSystem<GravityForceGeneratorSystem>();
-	world.getSystemManager().addSystem<FixedSpringForceGeneratorSystem>();
-	world.getSystemManager().addSystem<PairedSpringForceGeneratorSystem>();
-	world.getSystemManager().addSystem<SphereContactGeneratorSystem>();
-	world.getSystemManager().addSystem<CableComponentSystem>();
-	world.getSystemManager().addSystem<RodSystem>();
 	world.getSystemManager().addSystem<ParticleContactResolutionSystem>();
 	world.getSystemManager().addSystem<ForceAccumulatorSystem>();
 	world.getSystemManager().addSystem<ForceAndTorqueAccumulatorSystem>();
-	world.getSystemManager().addSystem<FlightSimulatorSystem>();
 	world.getSystemManager().addSystem<FPSControlSystem>();
-	world.getSystemManager().addSystem<FollowCameraSystem>();
 	world.getSystemManager().addSystem<CameraLookSystem>();
-	world.getSystemManager().addSystem<InfiniteSpawnSystem>();
-	world.getSystemManager().addSystem<InfiniteSpawnTargetSystem>();
 	world.getSystemManager().addSystem<AeroControlSystem>();
 	world.getSystemManager().addSystem<SetAerodynamicTensorSystem>();
 	world.getSystemManager().addSystem<AeroSystem>();
-	world.getSystemManager().addSystem<LifeTimeSystem>();
-	world.getSystemManager().addSystem<MoveInBoundsSystem>();
 	world.getSystemManager().addSystem<DynamicDirectionalLightSystem>();
 	world.getSystemManager().addSystem<DynamicPointLightSystem>();
 	world.getSystemManager().addSystem<DynamicSpotLightSystem>();
@@ -113,6 +102,8 @@ int main()
 	world.getSystemManager().addSystem<SphereColliderSystem>(rp3dWorld);
 	world.getSystemManager().addSystem<BoxColliderSystem>(rp3dWorld);
 	world.getSystemManager().addSystem<RigidbodyGravityForceGeneratorSystem>();
+
+	world.getSystemManager().addSystem<JointSystem>();
 
 	float time = glfwGetTime();
 	float stepTime = glfwGetTime();
@@ -159,41 +150,21 @@ int main()
 		world.getSystemManager().getSystem<FPSControlSystem>().Update(deltaTime);
 		world.getSystemManager().getSystem<RotateSystem>().Update(deltaTime);
 		world.getSystemManager().getSystem<ParticleSpawnerSystem>().Update(deltaTime);
-		world.getSystemManager().getSystem<MoveInBoundsSystem>().Update(deltaTime);
-
-		//Flight Sim
-		world.getSystemManager().getSystem<FlightSimulatorSystem>().Update(deltaTime);
-		world.getSystemManager().getSystem<FollowCameraSystem>().Update(deltaTime);
-		world.getSystemManager().getSystem<CameraLookSystem>().Update(deltaTime);
-		world.getSystemManager().getSystem<InfiniteSpawnTargetSystem>().Update(deltaTime);
-		world.getSystemManager().getSystem<InfiniteSpawnSystem>().Update(deltaTime);
-		world.getSystemManager().getSystem<AeroControlSystem>().Update(deltaTime);
-		world.getSystemManager().getSystem<SetAerodynamicTensorSystem>().Update(deltaTime);
-		world.getSystemManager().getSystem<LifeTimeSystem>().Update(deltaTime);
 
 		// Update Transform
-		world.getSystemManager().getSystem<UpdateTransformMatricesSystem>().Update(deltaTime);
 		// Physics
 		float fixedDeltaTime = 1 / 60.0f;
 		//float fixedDeltaTime = 1 / 60.0f;
-		world.getSystemManager().getSystem<AeroSystem>().Update(fixedDeltaTime);
-		world.getSystemManager().getSystem<AeroSystem>().Update(fixedDeltaTime);
 		// Particle Force Generators
-		world.getSystemManager().getSystem<GravityForceGeneratorSystem>().Update(fixedDeltaTime);
-		world.getSystemManager().getSystem<FixedSpringForceGeneratorSystem>().Update(fixedDeltaTime);
-		world.getSystemManager().getSystem<PairedSpringForceGeneratorSystem>().Update(fixedDeltaTime);
-		world.getSystemManager().getSystem<ForceAccumulatorSystem>().Update(fixedDeltaTime);
-		world.getSystemManager().getSystem<ParticleSystem>().Update(fixedDeltaTime);
+		world.getSystemManager().getSystem<JointSystem>().Update(fixedDeltaTime);
+
 		// Rigiidbody Force Generators and collisions
-		//world.getSystemManager().getSystem<RigidbodyGravityForceGeneratorSystem>().Update(fixedDeltaTime);
+		world.getSystemManager().getSystem<RigidbodyGravityForceGeneratorSystem>().Update(fixedDeltaTime);
 		world.getSystemManager().getSystem<ForceAndTorqueAccumulatorSystem>().Update(fixedDeltaTime);
 		world.getSystemManager().getSystem<RigidBodySystem>().Update(fixedDeltaTime);
 		world.getSystemManager().getSystem<SphereColliderSystem>().Update(fixedDeltaTime);
 		world.getSystemManager().getSystem<BoxColliderSystem>().Update(fixedDeltaTime);
 		// Physics Solvers
-		world.getSystemManager().getSystem<SphereContactGeneratorSystem>().Update(fixedDeltaTime);
-		world.getSystemManager().getSystem<CableComponentSystem>().Update(fixedDeltaTime);
-		world.getSystemManager().getSystem<RodSystem>().Update(fixedDeltaTime);
 		world.getSystemManager().getSystem<ParticleContactResolutionSystem>().Update(fixedDeltaTime);
 
 		world.getSystemManager().getSystem<ContactGenerationSystem>().Update(fixedDeltaTime);
@@ -268,10 +239,10 @@ void LoadModels(ECSWorld& world)
 }
 
 enum BodyPart {
-	LeftFoot,
-	RightFoot,
 	LeftLeg,
 	RightLeg,
+	LeftThigh,
+	RightThigh,
 	Hip,
 	Abs,
 	Chest,
@@ -287,10 +258,10 @@ void BuildRagdoll(ECSWorld& world)
 {
 	// Bodyparts -> from the perspective of who looks at them
 	Vector3 bodyPartPosition[12] = {
-		Vector3 ( 0.7f,  1.7f, 1), /* Left Foot     */
-		Vector3 ( 4.1f,  1.7f, 1), /* Right Foot    */
-		Vector3 ( 0.7f,  5.4f, 1), /* Left Leg      */
-		Vector3 ( 4.1f,  5.4f, 1), /* Right Leg     */
+		Vector3 ( 0.7f,  1.7f, 1), /* Left Leg      */
+		Vector3 ( 4.1f,  1.7f, 1), /* Right Leg     */
+		Vector3 ( 0.7f,  5.4f, 1), /* Left Thigh    */
+		Vector3 ( 4.1f,  5.4f, 1), /* Right Thigh   */
 		Vector3 ( 2.4f,  8.6f, 1), /* Hip           */
 		Vector3 ( 2.4f, 10.3f, 1), /* Abs           */
 		Vector3 ( 2.4f, 12.5f, 1), /* Chest         */
@@ -300,10 +271,10 @@ void BuildRagdoll(ECSWorld& world)
 		Vector3 ( 8.8f, 13,    1), /* Right Forearm */
 		Vector3 ( 2.4f, 15.2f, 1)  /* Head          */};
 	Vector3 bodyPartScale[12] = { 
-		Vector3 (1,3,1) /* Left Foot     */,
-		Vector3 (1,3,1) /* Right Foot    */,
-		Vector3 (1,4,1) /* Left Leg      */,
-		Vector3 (1,4,1) /* Right Leg     */,
+		Vector3 (1,3,1) /* Left Leg      */,
+		Vector3 (1,3,1) /* Right Leg     */,
+		Vector3 (1,4,1) /* Left Thigh    */,
+		Vector3 (1,4,1) /* Right Thigh   */,
 		Vector3 (4,2,1) /* Hip           */,
 		Vector3 (2,1,1) /* Abs           */,
 		Vector3 (4,2,1) /* Chest         */,
@@ -315,29 +286,29 @@ void BuildRagdoll(ECSWorld& world)
 	
 	int limbToLimb[12][4] = {
 		/* -1 means no connection */
-		/* Left Foot     */ {LeftLeg,      Nothing,      Nothing, Nothing  },
-		/* Right Foot    */ {RightLeg,     Nothing,      Nothing, Nothing  },
-		/* Left Ankle    */ {LeftFoot,     Hip,          Nothing, Nothing  },
-		/* Right Ankle   */ {LeftFoot,     Hip,          Nothing, Nothing  },
-		/* Hip           */ {LeftLeg,      RightLeg,     Abs,     Nothing  },
-		/* Abs           */ {Hip,          Chest,        Nothing, Nothing  },
-		/* Chest         */ {Abs,          LeftArm,      Head,    RightArm },
-		/* Left Arm      */ {LeftForearm,  Chest,        Nothing, Nothing  },
-		/* Right Arm     */ {Chest,        RightForearm, Nothing, Nothing  },
-		/* Left Forearm  */ {LeftArm,      Nothing,      Nothing, Nothing  },
-		/* Right Forearm */ {RightArm,     Nothing,      Nothing, Nothing  },
-		/* Head          */ {Chest,        Nothing,      Nothing, Nothing  }
+		/* Left Leg      */ {LeftThigh,   Nothing,      Nothing, Nothing  },
+		/* Right Leg     */ {RightThigh,  Nothing,      Nothing, Nothing  },
+		/* Left Thigh    */ {LeftLeg,     Hip,          Nothing, Nothing  },
+		/* Right Thigh   */ {RightLeg,    Hip,          Nothing, Nothing  },
+		/* Hip           */ {LeftThigh,   RightThigh,   Abs,     Nothing  },
+		/* Abs           */ {Hip,         Chest,        Nothing, Nothing  },
+		/* Chest         */ {Abs,         LeftArm,      RightArm,Head     },
+		/* Left Arm      */ {LeftForearm, Chest,        Nothing, Nothing  },
+		/* Right Arm     */ {Chest,       RightForearm, Nothing, Nothing  },
+		/* Left Forearm  */ {LeftArm,     Nothing,      Nothing, Nothing  },
+		/* Right Forearm */ {RightArm,    Nothing,      Nothing, Nothing  },
+		/* Head          */ {Chest,       Nothing,      Nothing, Nothing  }
 	};
 
 	Vector3 sockets[12][4] = { 
 		// Local position of all sockets to get the bones through and connect the limbs
 		// (0,0,0) is an invalid socket
-		/* Left Foot     */ {Vector3(0.0f,1.5,0.0f) , Vector3(0,0,0),     Vector3(0,0,0),    Vector3(0,0,0)},
+		/* Left Foot     */ {Vector3(0.0f,1.5f,0.0f), Vector3(0,0,0),     Vector3(0,0,0),    Vector3(0,0,0)},
 		/* Right Foot    */ {Vector3(0.0f,1.5f,0.0f), Vector3(0,0,0),     Vector3(0,0,0),    Vector3(0,0,0)},
 		/* Left Ankle    */ {Vector3(0,-2,0),         Vector3(0,2,0),     Vector3(0,0,0),    Vector3(0,0,0)},
 		/* Right Ankle   */ {Vector3(0,-2,0),         Vector3(0,2,0),     Vector3(0,0,0),    Vector3(0,0,0)},
 		/* Hip           */ {Vector3(-1,-1,0),        Vector3(1,-1,0),    Vector3(0,1,0),    Vector3(0,0,0)},
-		/* Abs           */ {Vector3(0,-1,0),         Vector3(0,1,0),     Vector3(0,0,0),    Vector3(0,0,0)},
+		/* Abs           */ {Vector3(0,-0.5f,0),      Vector3(0,0.5f,0),  Vector3(0,0,0),    Vector3(0,0,0)},
 		/* Chest         */ {Vector3(0,-1,0),         Vector3(-2,0.5f,0), Vector3(2,0.5f,0), Vector3(0,1,0)},
 		/* Left Arm      */ {Vector3(-1.5f,0,0),      Vector3(1.5f,0,0),  Vector3(0,0,0),    Vector3(0,0,0)},
 		/* Right Arm     */ {Vector3(-1.5f,0,0),      Vector3(1.5f,0,0),  Vector3(0,0,0),    Vector3(0,0,0)},
@@ -346,12 +317,13 @@ void BuildRagdoll(ECSWorld& world)
 		/* Head          */ {Vector3(0,-1.0f,0),      Vector3(0,0,0),     Vector3(0,0,0),    Vector3(0,0,0)},
 	};
 	ECSEntity limbList[12];
+	ECSEntity jointList[11];
 	int joints = 0;
-	for (int limbIterator = LeftFoot; limbIterator <= Head; limbIterator++)
+	for (int limbIterator = LeftLeg; limbIterator <= Head; limbIterator++)
 	{
 		auto limb = world.createEntity();
-		limb.addComponent<TransformComponentV2>(bodyPartPosition[limbIterator], bodyPartScale[limbIterator], Vector3(0,0,0));
-		limb.addComponent<RigidBodyComponent>(10.0f, 0.1f, 0.1f, Vector3(0, 0, 0), Vector3(0, 0, 0), 5);
+		limb.addComponent<TransformComponentV2>(bodyPartPosition[limbIterator]);
+		limb.addComponent<RigidBodyComponent>();
 		auto limbCollider = world.createEntity();
 		limbCollider.addComponent<BoxColliderComponent>(limb, bodyPartScale[limbIterator]);
 		limbList[limbIterator] = limb;
@@ -373,18 +345,36 @@ void BuildRagdoll(ECSWorld& world)
 					}
 				}
 				auto theOtherLimbSocket = sockets[theOtherLimbIdx][otherJointIterator];
+
+				auto limbSocketW = limb.getComponent<TransformComponentV2>().LocalToWorldDirection(limbSocket);
+				auto theOtherLimbSocketW = theOtherLimb.getComponent<TransformComponentV2>().LocalToWorldDirection(theOtherLimbSocket);
+				float initialDistance = glm::length(limbSocketW- theOtherLimbSocketW);
 				auto joint = world.createEntity();
 				joint.addComponent<JointComponent>(
 					limb,               // The current Limb
 					limbSocket,         // The current Limb Socket
 					theOtherLimb,		// The referenced limb
 					theOtherLimbSocket,	// The refedenced limb socket of choice
-					0.1f // Cut some slack
-					);
+					initialDistance,
+					0.001f, // Cut some slack
+					true);
+				jointList[joints] = joint;
 				joints++;
 			}
 		}
 	}
+	/*
+	jointList[0].getComponent<JointComponent>().show = true;
+	jointList[1].getComponent<JointComponent>().show = true;
+	jointList[2].getComponent<JointComponent>().show = true;
+	jointList[3].getComponent<JointComponent>().show = true;
+	jointList[4].getComponent<JointComponent>().show = true;
+	jointList[5].getComponent<JointComponent>().show = true;
+	jointList[6].getComponent<JointComponent>().show = true;
+	jointList[7].getComponent<JointComponent>().show = true;
+	jointList[8].getComponent<JointComponent>().show = true;
+	jointList[9].getComponent<JointComponent>().show = true;
+	jointList[10].getComponent<JointComponent>().show = true;*/
 }
 
 void BuildFloor(ECSWorld& world)

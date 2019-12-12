@@ -207,6 +207,9 @@
     <ClCompile Include="RigidbodyGravityForceGeneratorSystem.cpp">
       <Filter>Physics\Rigidbody</Filter>
     </ClCompile>
+    <ClCompile Include="JointSystem.cpp">
+      <Filter>TestCS</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stb_image.h">
@@ -483,6 +486,9 @@
       <Filter>Physics\Rigidbody</Filter>
     </ClInclude>
     <ClInclude Include="JointComponent.h">
+      <Filter>TestCS</Filter>
+    </ClInclude>
+    <ClInclude Include="JointSystem.h">
       <Filter>TestCS</Filter>
     </ClInclude>
   </ItemGroup>

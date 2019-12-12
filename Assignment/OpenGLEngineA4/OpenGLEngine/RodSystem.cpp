@@ -18,8 +18,8 @@ namespace Reality
 			float currentLength = glm::length(rod.entityA.getComponent<TransformComponentV2>().GetPosition() -
 				rod.entityB.getComponent<TransformComponentV2>().GetPosition());
 
-			getWorld().data.renderUtil->DrawSphere(rod.entityA.getComponent<TransformComponentV2>().GetPosition(), 1, Color::Purple);
-			getWorld().data.renderUtil->DrawSphere(rod.entityB.getComponent<TransformComponentV2>().GetPosition(), 1, Color::Purple);
+			///getWorld().data.renderUtil->DrawSphere(rod.entityA.getComponent<TransformComponentV2>().GetPosition(), 1, Color::Purple);
+			//getWorld().data.renderUtil->DrawSphere(rod.entityB.getComponent<TransformComponentV2>().GetPosition(), 1, Color::Purple);
 
 			if (currentLength == rod.length)
 			{
@@ -39,9 +39,9 @@ namespace Reality
 					0,
 					normal,
 					currentLength - rod.length);
-				getWorld().data.renderUtil->DrawLine(rod.entityA.getComponent<TransformComponentV2>().GetPosition(),
-					rod.entityB.getComponent<TransformComponentV2>().GetPosition(),
-					Color::Yellow);
+				//getWorld().data.renderUtil->DrawLine(rod.entityA.getComponent<TransformComponentV2>().GetPosition(),
+				//	rod.entityB.getComponent<TransformComponentV2>().GetPosition(),
+				//	Color::Yellow);
 			}
 			else
 			{
@@ -52,9 +52,9 @@ namespace Reality
 					0,
 					-normal,
 					rod.length - currentLength);
-				getWorld().data.renderUtil->DrawLine(rod.entityA.getComponent<TransformComponentV2>().GetPosition(),
-					rod.entityB.getComponent<TransformComponentV2>().GetPosition(),
-					Color::Yellow);
+				//getWorld().data.renderUtil->DrawLine(rod.entityA.getComponent<TransformComponentV2>().GetPosition(),
+				//	rod.entityB.getComponent<TransformComponentV2>().GetPosition(),
+				//	Color::Yellow);
 			}
 
 			

@@ -50,8 +50,8 @@ namespace Reality
 						Vector3(0.1f, 0.1f, 0.1f) * min((spring.springConstant / 10.0f), 5.0f), Vector3(0,0,0), color);
 				}
 
-				getWorld().data.renderUtil->DrawLine(
-					entityTransformB.position, entityTransformB.position + length * direction, color);
+				//getWorld().data.renderUtil->DrawLine(
+				//	entityTransformB.position, entityTransformB.position + length * direction, color);
 			}
 		}
 

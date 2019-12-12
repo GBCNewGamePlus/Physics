@@ -58,7 +58,7 @@ namespace Reality
 
 				if (sphereCollider.body.hasComponent<TransformComponentV2>())
 				{
-					getWorld().data.renderUtil->DrawSphere(sphereCollider.body.getComponent<TransformComponentV2>().GetUnScaledTransformationMatrix() * Vector4(sphereCollider.offset, 1.0f), sphereCollider.radius);
+					//getWorld().data.renderUtil->DrawSphere(sphereCollider.body.getComponent<TransformComponentV2>().GetUnScaledTransformationMatrix() * Vector4(sphereCollider.offset, 1.0f), sphereCollider.radius);
 				}
 			}
 			else
